@@ -548,9 +548,10 @@ const AgriFoodQuestionario = () => {
           {currentSection === 3 && selectedTrends.length > 0 && (
             <div className="bg-white rounded-3xl shadow-xl p-8">
               {(() => {
-                const currentTrend = trends.find(
-                  (t) => t.id === selectedTrends[currentTrendIndex]
-                );
+                const currentTrend =
+                  trends.find(
+                    (t) => t.id === selectedTrends[currentTrendIndex]
+                  ) ?? null;
                 return (
                   <>
                     <div className="mb-6">
@@ -563,7 +564,7 @@ const AgriFoodQuestionario = () => {
                           </div>
                           <div>
                             <h2 className="text-2xl font-bold">
-                              {currentTrend.name}
+                              {currentTrend?.name}
                             </h2>
                             <p className="text-gray-600">
                               Trend {currentTrendIndex + 1} di{" "}
@@ -610,7 +611,7 @@ const AgriFoodQuestionario = () => {
                                   )
                                 }
                                 className={`flex-1 py-3 rounded-lg transition-all ${
-                                  formData.trendDetails[currentTrend.id]
+                                  formData.trendDetails[currentTrend?.id]
                                     ?.familiarita === level
                                     ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transform scale-105"
                                     : "bg-white border-2 border-gray-200 hover:border-gray-300"
@@ -632,7 +633,7 @@ const AgriFoodQuestionario = () => {
                               type="checkbox"
                               className="mr-3"
                               checked={
-                                formData.trendDetails[currentTrend.id]
+                                formData.trendDetails[currentTrend?.id]
                                   ?.esempi || false
                               }
                               onChange={(e) =>
@@ -652,7 +653,7 @@ const AgriFoodQuestionario = () => {
                               type="checkbox"
                               className="mr-3"
                               checked={
-                                formData.trendDetails[currentTrend.id]
+                                formData.trendDetails[currentTrend?.id]
                                   ?.aggiornamento || false
                               }
                               onChange={(e) =>
@@ -696,7 +697,7 @@ const AgriFoodQuestionario = () => {
                                   )
                                 }
                                 className={`flex-1 py-3 rounded-lg transition-all ${
-                                  formData.trendDetails[currentTrend.id]
+                                  formData.trendDetails[currentTrend?.id]
                                     ?.rilevanza === level
                                     ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg transform scale-105"
                                     : "bg-white border-2 border-gray-200 hover:border-gray-300"
@@ -716,7 +717,7 @@ const AgriFoodQuestionario = () => {
                             <select
                               className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-green-500 focus:outline-none"
                               value={
-                                formData.trendDetails[currentTrend.id]
+                                formData.trendDetails[currentTrend?.id]
                                   ?.orizzonte || ""
                               }
                               onChange={(e) =>
@@ -742,7 +743,7 @@ const AgriFoodQuestionario = () => {
                             <select
                               className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-green-500 focus:outline-none"
                               value={
-                                formData.trendDetails[currentTrend.id]
+                                formData.trendDetails[currentTrend?.id]
                                   ?.budget || ""
                               }
                               onChange={(e) =>
@@ -767,9 +768,9 @@ const AgriFoodQuestionario = () => {
                     </div>
 
                     {/* Barriere (shown only if rilevanza >= 4 or orizzonte <= 2 anni) */}
-                    {(formData.trendDetails[currentTrend.id]?.rilevanza >= 4 ||
+                    {(formData.trendDetails[currentTrend?.id]?.rilevanza >= 4 ||
                       ["12mesi", "1-2anni"].includes(
-                        formData.trendDetails[currentTrend.id]?.orizzonte
+                        formData.trendDetails[currentTrend?.id]?.orizzonte
                       )) && (
                       <div className="p-6 bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl">
                         <h3 className="font-semibold mb-4 flex items-center gap-2">
@@ -794,7 +795,7 @@ const AgriFoodQuestionario = () => {
                                     )
                                   }
                                   className={`flex-1 py-2 rounded transition-all text-sm ${
-                                    formData.trendDetails[currentTrend.id]
+                                    formData.trendDetails[currentTrend?.id]
                                       ?.competenze === level
                                       ? "bg-orange-500 text-white"
                                       : "bg-white border border-gray-200"
@@ -821,7 +822,7 @@ const AgriFoodQuestionario = () => {
                                     )
                                   }
                                   className={`flex-1 py-2 rounded transition-all text-sm ${
-                                    formData.trendDetails[currentTrend.id]
+                                    formData.trendDetails[currentTrend?.id]
                                       ?.funding === level
                                       ? "bg-red-500 text-white"
                                       : "bg-white border border-gray-200"
