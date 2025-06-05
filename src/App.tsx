@@ -2,6 +2,41 @@ import React, { useState, useEffect } from "react";
 import * as Icons from "lucide-react";
 import { questionnaireAPI } from "./api/questionnaire";
 
+type TrendDetail = {
+  familiarita?: number;
+  esempi?: boolean;
+  aggiornamento?: boolean;
+  rilevanza?: number;
+  orizzonte?: string;
+  budget?: string;
+  competenze?: number;
+  funding?: number;
+};
+
+type TrendDetails = {
+  [trendId: string]: TrendDetail;
+};
+
+const [formData, setFormData] = useState<{
+  dimensione: string;
+  segmento: string[];
+  export: string;
+  digitalizzazione: string;
+  budget: string;
+  collaborazioni: string;
+  trends: string[];
+  trendDetails: TrendDetails;
+}>({
+  dimensione: "",
+  segmento: [],
+  export: "",
+  digitalizzazione: "",
+  budget: "",
+  collaborazioni: "",
+  trends: [],
+  trendDetails: {},
+});
+
 const AgriFoodQuestionario = () => {
   const [currentSection, setCurrentSection] = useState(0);
   const [formData, setFormData] = useState({
@@ -130,11 +165,11 @@ const AgriFoodQuestionario = () => {
     return () => clearTimeout(timer);
   }, [currentSection, currentTrendIndex]);
 
-  const handleInputChange = (name, value) => {
+  const handleInputChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleMultiSelect = (name, value) => {
+  const handleMultiSelect = (name: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [name]: prev[name].includes(value)
@@ -143,7 +178,7 @@ const AgriFoodQuestionario = () => {
     }));
   };
 
-  const handleTrendSelection = (trendId) => {
+  const handleTrendSelection = (trendId: string) => {
     if (selectedTrends.includes(trendId)) {
       setSelectedTrends((prev) => prev.filter((t) => t !== trendId));
     } else if (selectedTrends.length < 4) {
@@ -151,7 +186,11 @@ const AgriFoodQuestionario = () => {
     }
   };
 
-  const handleTrendDetailChange = (trendId, field, value) => {
+  const handleTrendDetailChange = (
+    trendId: string,
+    field: string,
+    value: any
+  ) => {
     setFormData((prev) => ({
       ...prev,
       trendDetails: {
