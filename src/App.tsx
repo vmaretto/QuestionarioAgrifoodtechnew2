@@ -548,10 +548,10 @@ const AgriFoodQuestionario = () => {
           {currentSection === 3 && selectedTrends.length > 0 && (
             <div className="bg-white rounded-3xl shadow-xl p-8">
               {(() => {
-                const currentTrend =
-                  trends.find(
-                    (t) => t.id === selectedTrends[currentTrendIndex]
-                  ) ?? null;
+                const currentTrend = trends.find(
+                  (t) => t.id === selectedTrends[currentTrendIndex]
+                );
+                if (!currentTrend) return null;
                 return (
                   <>
                     <div className="mb-6">
