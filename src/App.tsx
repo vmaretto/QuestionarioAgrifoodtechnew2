@@ -55,91 +55,238 @@ const AgriFoodQuestionario = () => {
   const trends = [
     {
       id: "automazione",
-      name: "Automazione e robotica industriale",
+      name: "Processi produttivi innovativi - Automazione e robotica industriale",
       category: "trasformazione",
       icon: "🤖",
       color: "from-blue-500 to-purple-600",
     },
     {
       id: "ai-processi",
-      name: "AI per processi produttivi",
+      name: "Processi produttivi innovativi - Intelligenza Artificiale e IoT in fabbrica",
       category: "trasformazione",
       icon: "🧠",
       color: "from-purple-500 to-pink-600",
     },
     {
       id: "biotech",
-      name: "Biotecnologie e fermentazione",
+      name: "Processi produttivi innovativi - Biotecnologie e fermentazione avanzata",
       category: "trasformazione",
       icon: "🧬",
       color: "from-green-500 to-teal-600",
     },
     {
+      id: "stampa-3d",
+      name: "Processi produttivi innovativi - Stampa 3D di alimenti",
+      category: "trasformazione",
+      icon: "",
+      color: "from-green-500 to-teal-600",
+    },
+    {
+      id: "trattamenti",
+      name: "Processi produttivi innovativi - Trattamenti non termici",
+      category: "trasformazione",
+      icon: "",
+      color: "from-green-500 to-teal-600",
+    },
+    {
+      id: "conservanti",
+      name: "Processi produttivi innovativi - Conservanti naturali e biopreservazione",
+      category: "trasformazione",
+      icon: "",
+      color: "from-green-500 to-teal-600",
+    },
+    {
+      id: "atmosfere",
+      name: "Processi produttivi innovativi - Atmosfere controllate e packaging protettivo",
+      category: "trasformazione",
+      icon: "",
+      color: "from-green-500 to-teal-600",
+    },
+    {
+      id: "fermentazioni",
+      name: "Processi produttivi innovativi - Fermentazioni e maturazioni controllate",
+      category: "trasformazione",
+      icon: "",
+      color: "from-green-500 to-teal-600",
+    },
+    {
+      id: "ingredienti",
+      name: "Processi produttivi innovativi - Ingredienti riformulati per gusto e salute",
+      category: "trasformazione",
+      icon: "",
+      color: "from-green-500 to-teal-600",
+    },
+    {
+      id: "mild-processing",
+      name: "Processi produttivi innovativi - Tecniche di lavorazione dolci (mild processing)",
+      category: "trasformazione",
+      icon: "",
+      color: "from-green-500 to-teal-600",
+    },
+    {
+      id: "bio-based",
+      name: "Processi produttivi innovativi - Materiali sostenibili e bio-based",
+      category: "trasformazione",
+      icon: "",
+      color: "from-green-500 to-teal-600",
+    },
+    {
       id: "conservazione",
-      name: "Tecnologie di conservazione",
+      name: "Processi produttivi innovativi - Packaging attivo per la conservazione",
       category: "trasformazione",
       icon: "❄️",
       color: "from-cyan-500 to-blue-600",
     },
     {
       id: "packaging",
-      name: "Packaging sostenibile",
+      name: "Processi produttivi innovativi - Imballaggi intelligenti e connessi",
       category: "trasformazione",
       icon: "📦",
       color: "from-emerald-500 to-green-600",
     },
     {
       id: "smart-retail",
-      name: "Smart retail",
+      name: "Canali di vendita fisici - Smart Store e Retail Immersivo",
       category: "distribuzione",
       icon: "🏪",
       color: "from-orange-500 to-red-600",
     },
     {
-      id: "ecommerce",
-      name: "E-commerce avanzato",
+      id: "automazione-retail",
+      name: "Canali di vendita fisici - Automazione retail e vending intelligente",
+      category: "distribuzione",
+      icon: "🏪",
+      color: "from-orange-500 to-red-600",
+    },
+    {
+      id: "tracciabilità",
+      name: "Canali di vendita fisici - Tracciabilità in-store con Blockchain",
+      category: "distribuzione",
+      icon: "🏪",
+      color: "from-orange-500 to-red-600",
+    },
+    {
+      id: "raccomandazione",
+      name: "Canali digitali: e-commerce e piattaforme D2C - Sistemi di raccomandazione basati su Intelligenza Artificiale",
+      category: "distribuzione",
+      icon: "🏪",
+      color: "from-orange-500 to-red-600",
+    },
+    {
+      id: "subscription",
+      name: "Canali digitali: e-commerce e piattaforme D2C - Subscription box e vendita diretta D2C",
+      category: "distribuzione",
+      icon: "🏪",
+      color: "from-orange-500 to-red-600",
+    },
+    {
+      id: "social-commerce",
+      name: "Canali digitali: e-commerce e piattaforme D2C - Social commerce e Live Shopping",
+      category: "distribuzione",
+      icon: "🏪",
+      color: "from-orange-500 to-red-600",
+    },
+    {
+      id: "marketplace",
+      name: "Mercati domestici/internazionali: Made in Italy - Marketplace e piattaforme integrate",
+      category: "distribuzione",
+      icon: "🏪",
+      color: "from-orange-500 to-red-600",
+    },
+    {
+      id: "blockchain-autenticità",
+      name: "Mercati domestici/internazionali: Made in Italy - Blockchain per l’autenticità del prodotto",
+      category: "distribuzione",
+      icon: "🏪",
+      color: "from-orange-500 to-red-600",
+    },
+    {
+      id: "quick-commerce",
+      name: "Evoluzione comportamento del consumatore e nuovi modelli - Quick commerce e dark store",
+      category: "distribuzione",
+      icon: "🏪",
+      color: "from-orange-500 to-red-600",
+    },
+    {
+      id: "metaverso",
+      name: "Evoluzione comportamento del consumatore e nuovi modelli - Esperienze immersive e metaverso",
       category: "distribuzione",
       icon: "💻",
       color: "from-indigo-500 to-purple-600",
     },
     {
-      id: "blockchain",
-      name: "Tracciabilità blockchain",
+      id: "personalizzazione",
+      name: "Evoluzione comportamento del consumatore e nuovi modelli - Personalizzazione e CRM evoluto",
       category: "distribuzione",
       icon: "🔗",
       color: "from-slate-500 to-gray-600",
     },
     {
-      id: "crm",
-      name: "CRM e personalizzazione",
+      id: "etichette-intelligenti",
+      name: "Evoluzione comportamento del consumatore e nuovi modelli - Etichette intelligenti e tracciabilità",
       category: "distribuzione",
       icon: "🎯",
       color: "from-pink-500 to-rose-600",
     },
     {
-      id: "ai-logistica",
-      name: "AI per logistica",
+      id: "ottimizzazione-percorsi",
+      name: "Ottimizzazione dei flussi e delle risorse - Intelligenza Artificiale per ottimizzazione dei percorsi e delle consegne",
       category: "logistica",
       icon: "🚚",
       color: "from-yellow-500 to-orange-600",
     },
     {
-      id: "cold-chain",
-      name: "Cold chain 4.0",
+      id: "Smart-Inventory",
+      name: "Ottimizzazione dei flussi e delle risorse - Smart Inventory Management e previsione della domanda",
       category: "logistica",
       icon: "🌡️",
       color: "from-blue-400 to-cyan-600",
     },
     {
-      id: "automazione-log",
-      name: "Automazione logistica",
+      id: "Sistemi-integrati-WMS",
+      name: "Ottimizzazione dei flussi e delle risorse - Sistemi integrati WMS e TMS",
       category: "logistica",
       icon: "🏭",
       color: "from-gray-500 to-slate-600",
     },
     {
-      id: "quick-commerce",
-      name: "Quick commerce",
+      id: "monitoraggio-intelligente",
+      name: "Tracciabilità, qualità e sicurezza alimentare - Monitoraggio intelligente della logistica",
+      category: "logistica",
+      icon: "⚡",
+      color: "from-amber-500 to-yellow-600",
+    },
+    {
+      id: "cold-chain",
+      name: "Tracciabilità, qualità e sicurezza alimentare - Cold chain decentralizzata e adattiva",
+      category: "logistica",
+      icon: "⚡",
+      color: "from-amber-500 to-yellow-600",
+    },
+    {
+      id: "sistemi-distribuiti",
+      name: "Tracciabilità, qualità e sicurezza alimentare - Sistemi distribuiti per la tracciabilità di filiera",
+      category: "logistica",
+      icon: "⚡",
+      color: "from-amber-500 to-yellow-600",
+    },
+    {
+      id: "Robotica-automazione",
+      name: "Automazione e logistica urbana intelligente - Robotica e automazione nei magazzini",
+      category: "logistica",
+      icon: "⚡",
+      color: "from-amber-500 to-yellow-600",
+    },
+    {
+      id: "Micro-fulfillment",
+      name: "Automazione e logistica urbana intelligente - Micro-fulfillment centers",
+      category: "logistica",
+      icon: "⚡",
+      color: "from-amber-500 to-yellow-600",
+    },
+    {
+      id: "consegna",
+      name: "Automazione e logistica urbana intelligente - Consegna autonoma e logistica dell'ultimo miglio sostenibile",
       category: "logistica",
       icon: "⚡",
       color: "from-amber-500 to-yellow-600",
@@ -329,7 +476,7 @@ const AgriFoodQuestionario = () => {
               <div className="grid md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl">
                   <Icons.Clock className="w-12 h-12 text-green-600 mx-auto mb-3" />
-                  <h3 className="font-semibold mb-2">15 minuti</h3>
+                  <h3 className="font-semibold mb-2">10 minuti</h3>
                   <p className="text-sm text-gray-600">
                     Tempo stimato di compilazione
                   </p>
@@ -505,11 +652,11 @@ const AgriFoodQuestionario = () => {
             <div className="bg-white rounded-3xl shadow-xl p-8">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold mb-2">
-                  Seleziona i Trend Tecnologici
+                  Seleziona le tecnologie emergenti
                 </h2>
                 <p className="text-gray-600">
-                  Scegli fino a 4 trend più rilevanti per la tua impresa nei
-                  prossimi 2-3 anni
+                  Scegli da 2 a 4 tecnologie più rilevanti per la tua impresa
+                  nei prossimi 2-3 anni
                 </p>
                 <div className="mt-3 flex items-center gap-2">
                   <div className="flex gap-1">
