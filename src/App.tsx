@@ -23,20 +23,24 @@ type FormData = {
   budget: string;
   collaborazioni: string;
   trends: string[];
+  // ATTENZIONE: QUALSIASI stringa può essere chiave di trendDetails
   trendDetails: { [trendId: string]: TrendDetail };
 };
 
 const AgriFoodQuestionario = () => {
+  // ────────── STATO ──────────
   const [currentSection, setCurrentSection] = useState<number>(0);
+
+  // ✅ ANNOTARE GLI ARRAY E GLI OGGETTI VUOTI
   const [formData, setFormData] = useState<FormData>({
     dimensione: "",
-    segmento: [],
+    segmento: [] as string[],                       // ✅ TIPO ATTESO: string[]
     export: "",
     digitalizzazione: "",
     budget: "",
     collaborazioni: "",
-    trends: [],
-    trendDetails: {},
+    trends: [] as string[],                          // ✅ TIPO ATTESO: string[]
+    trendDetails: {} as { [trendId: string]: TrendDetail }, // ✅ TIPO ATTESO: { [k:string]:TrendDetail }
   });
 
   const [selectedTrends, setSelectedTrends] = useState<string[]>([]);
@@ -47,98 +51,21 @@ const AgriFoodQuestionario = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
 
+  // ────────── DATI STATICI ──────────
   const trends = [
-    {
-      id: "automazione",
-      name: "Automazione e robotica industriale",
-      category: "trasformazione",
-      icon: "🤖",
-      color: "from-blue-500 to-purple-600",
-    },
-    {
-      id: "ai-processi",
-      name: "AI per processi produttivi",
-      category: "trasformazione",
-      icon: "🧠",
-      color: "from-purple-500 to-pink-600",
-    },
-    {
-      id: "biotech",
-      name: "Biotecnologie e fermentazione",
-      category: "trasformazione",
-      icon: "🧬",
-      color: "from-green-500 to-teal-600",
-    },
-    {
-      id: "conservazione",
-      name: "Tecnologie di conservazione",
-      category: "trasformazione",
-      icon: "❄️",
-      color: "from-cyan-500 to-blue-600",
-    },
-    {
-      id: "packaging",
-      name: "Packaging sostenibile",
-      category: "trasformazione",
-      icon: "📦",
-      color: "from-emerald-500 to-green-600",
-    },
-    {
-      id: "smart-retail",
-      name: "Smart retail",
-      category: "distribuzione",
-      icon: "🏪",
-      color: "from-orange-500 to-red-600",
-    },
-    {
-      id: "ecommerce",
-      name: "E-commerce avanzato",
-      category: "distribuzione",
-      icon: "💻",
-      color: "from-indigo-500 to-purple-600",
-    },
-    {
-      id: "blockchain",
-      name: "Tracciabilità blockchain",
-      category: "distribuzione",
-      icon: "🔗",
-      color: "from-slate-500 to-gray-600",
-    },
-    {
-      id: "crm",
-      name: "CRM e personalizzazione",
-      category: "distribuzione",
-      icon: "🎯",
-      color: "from-pink-500 to-rose-600",
-    },
-    {
-      id: "ai-logistica",
-      name: "AI per logistica",
-      category: "logistica",
-      icon: "🚚",
-      color: "from-yellow-500 to-orange-600",
-    },
-    {
-      id: "cold-chain",
-      name: "Cold chain 4.0",
-      category: "logistica",
-      icon: "🌡️",
-      color: "from-blue-400 to-cyan-600",
-    },
-    {
-      id: "automazione-log",
-      name: "Automazione logistica",
-      category: "logistica",
-      icon: "🏭",
-      color: "from-gray-500 to-slate-600",
-    },
-    {
-      id: "quick-commerce",
-      name: "Quick commerce",
-      category: "logistica",
-      icon: "⚡",
-      color: "from-amber-500 to-yellow-600",
-    },
+    { id: "automazione", name: "Automazione e robotica industriale", category: "trasformazione", icon: "🤖", color: "from-blue-500 to-purple-600" },
+    { id: "ai-processi", name: "AI per processi produttivi", category: "trasformazione", icon: "🧠", color: "from-purple-500 to-pink-600" },
+    { id: "biotech", name: "Biotecnologie e fermentazione", category: "trasformazione", icon: "🧬", color: "from-green-500 to-teal-600" },
+    { id: "conservazione", name: "Tecnologie di conservazione", category: "trasformazione", icon: "❄️", color: "from-cyan-500 to-blue-600" },
+    { id: "packaging", name: "Packaging sostenibile", category: "trasformazione", icon: "📦", color: "from-emerald-500 to-green-600" },
+    { id: "smart-retail", name: "Smart retail", category: "distribuzione", icon: "🏪", color: "from-orange-500 to-red-600" },
+    { id: "ecommerce", name: "E-commerce avanzato", category: "distribuzione", icon: "💻", color: "from-indigo-500 to-purple-600" },
+    { id: "blockchain", name: "Tracciabilità blockchain", category: "distribuzione", icon: "🔗", color: "from-slate-500 to-gray-600" },
+    { id: "crm", name: "CRM e personalizzazione", category: "distribuzione", icon: "🎯", color: "from-pink-500 to-rose-600" },
+    { id: "ai-logistica", name: "AI per logistica", category: "logistica", icon: "🚚", color: "from-yellow-500 to-orange-600" },
+    { id: "cold-chain", name: "Cold chain 4.0", category: "logistica", icon: "🌡️", color: "from-blue-400 to-cyan-600" },
+    { id: "automazione-log", name: "Automazione logistica", category: "logistica", icon: "🏭", color: "from-gray-500 to-slate-600" },
+    { id: "quick-commerce", name: "Quick commerce", category: "logistica", icon: "⚡", color: "from-amber-500 to-yellow-600" },
   ];
 
   const sections = [
@@ -149,16 +76,19 @@ const AgriFoodQuestionario = () => {
     { title: "Conclusione", subtitle: "Grazie per la partecipazione" },
   ];
 
+  // ────────── EFFETTO DI TRANSIZIONE ──────────
   useEffect(() => {
     setAnimateCard(true);
     const timer = setTimeout(() => setAnimateCard(false), 300);
     return () => clearTimeout(timer);
   }, [currentSection, currentTrendIndex]);
 
+  // ────────── HANDLER GENERICI ──────────
   const handleInputChange = (name: keyof FormData, value: any) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ✅ Usando “as string[]” in inizializzazione, prev[name] è già string[]
   const handleMultiSelect = (name: "segmento" | "trends", value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -193,6 +123,7 @@ const AgriFoodQuestionario = () => {
     }));
   };
 
+  // ────────── NAVIGAZIONE SEZIONI ──────────
   const nextSection = () => {
     if (currentSection === 2) {
       setFormData((prev) => ({ ...prev, trends: selectedTrends }));
@@ -224,15 +155,17 @@ const AgriFoodQuestionario = () => {
     }
   };
 
+  // ────────── INVIO QUESTIONARIO ──────────
   const handleSubmit = async () => {
     console.log("handleSubmit chiamato");
     setIsSubmitting(true);
     setSubmitError(null);
 
     try {
+      // ✅ CAST NECESSARIO: querySelector restituisce “Element | null”
       const emailInput = document.querySelector(
         'input[type="email"]'
-      ) as HTMLInputElement;
+      ) as HTMLInputElement | null;
       const email = emailInput ? emailInput.value : "";
 
       const dataToSubmit = {
@@ -248,6 +181,7 @@ const AgriFoodQuestionario = () => {
         console.log("Questionario inviato con successo!");
       }
     } catch (error: any) {
+      // ✅ Typing esplicito “error: any” altrimenti TS dà “unknown”
       setSubmitError(error.message);
       console.error("Errore invio:", error);
     } finally {
@@ -255,6 +189,7 @@ const AgriFoodQuestionario = () => {
     }
   };
 
+  // ────────── PROGRESS BAR ──────────
   const progress = ((currentSection + 1) / sections.length) * 100;
 
   return (
@@ -292,7 +227,7 @@ const AgriFoodQuestionario = () => {
             animateCard ? "scale-95 opacity-0" : "scale-100 opacity-100"
           }`}
         >
-          {/* Section 0: Welcome */}
+          {/* ===== Sezione 0: Welcome ===== */}
           {currentSection === 0 && (
             <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 text-center">
               <div className="mb-8">
@@ -339,7 +274,7 @@ const AgriFoodQuestionario = () => {
             </div>
           )}
 
-          {/* Section 1: Company Profile */}
+          {/* ===== Sezione 1: Profilo Aziendale ===== */}
           {currentSection === 1 && (
             <div className="bg-white rounded-3xl shadow-xl p-8">
               <h2 className="text-2xl font-bold mb-6">Profilo Aziendale</h2>
@@ -367,38 +302,18 @@ const AgriFoodQuestionario = () => {
                 </div>
               </div>
 
-              {/* Segmento */}
+              {/* Segmento (multi-selezione) */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Segmento della filiera (multi-selezione)
                 </label>
                 <div className="space-y-2">
                   {[
-                    {
-                      id: "produzione",
-                      label: "Produzione primaria/agricola",
-                      icon: "🌾",
-                    },
-                    {
-                      id: "trasformazione",
-                      label: "Trasformazione alimentare",
-                      icon: "🏭",
-                    },
-                    {
-                      id: "packaging",
-                      label: "Packaging e confezionamento",
-                      icon: "📦",
-                    },
-                    {
-                      id: "logistica",
-                      label: "Logistica e trasporto",
-                      icon: "🚚",
-                    },
-                    {
-                      id: "distribuzione",
-                      label: "Distribuzione e vendita",
-                      icon: "🛒",
-                    },
+                    { id: "produzione", label: "Produzione primaria/agricola", icon: "🌾" },
+                    { id: "trasformazione", label: "Trasformazione alimentare", icon: "🏭" },
+                    { id: "packaging", label: "Packaging e confezionamento", icon: "📦" },
+                    { id: "logistica", label: "Logistica e trasporto", icon: "🚚" },
+                    { id: "distribuzione", label: "Distribuzione e vendita", icon: "🛒" },
                   ].map((segment) => (
                     <label
                       key={segment.id}
@@ -426,7 +341,7 @@ const AgriFoodQuestionario = () => {
                 </div>
               </div>
 
-              {/* Export */}
+              {/* Quota export */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Quota export
@@ -450,7 +365,7 @@ const AgriFoodQuestionario = () => {
                 </div>
               </div>
 
-              {/* Digitalizzazione */}
+              {/* Livello di digitalizzazione */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Livello di digitalizzazione
@@ -487,7 +402,7 @@ const AgriFoodQuestionario = () => {
             </div>
           )}
 
-          {/* Section 2: Trend Selection */}
+          {/* ===== Sezione 2: Trend Selection ===== */}
           {currentSection === 2 && (
             <div className="bg-white rounded-3xl shadow-xl p-8">
               <div className="mb-6">
@@ -575,7 +490,7 @@ const AgriFoodQuestionario = () => {
             </div>
           )}
 
-          {/* Section 3: Trend Details */}
+          {/* ===== Sezione 3: Trend Details ===== */}
           {currentSection === 3 && selectedTrends.length > 0 && (
             <div className="bg-white rounded-3xl shadow-xl p-8">
               {(() => {
@@ -625,7 +540,7 @@ const AgriFoodQuestionario = () => {
                       </div>
                     </div>
 
-                    {/* Consapevolezza */}
+                    {/* ===== Consapevolezza ===== */}
                     <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl">
                       <h3 className="font-semibold mb-4 flex items-center gap-2">
                         <Icons.Lightbulb className="w-5 h-5 text-blue-600" />
@@ -703,7 +618,7 @@ const AgriFoodQuestionario = () => {
                       </div>
                     </div>
 
-                    {/* Interesse Strategico */}
+                    {/* ===== Interesse Strategico ===== */}
                     <div className="mb-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl">
                       <h3 className="font-semibold mb-4 flex items-center gap-2">
                         <Icons.TrendingUp className="w-5 h-5 text-green-600" />
@@ -781,9 +696,7 @@ const AgriFoodQuestionario = () => {
                               <option value="">Seleziona...</option>
                               <option value="0">0 €</option>
                               <option value="<50k">Meno di 50.000 €</option>
-                              <option value="50-200k">
-                                50.000 - 200.000 €
-                              </option>
+                              <option value="50-200k">50.000 - 200.000 €</option>
                               <option value=">200k">Oltre 200.000 €</option>
                             </select>
                           </div>
@@ -791,7 +704,7 @@ const AgriFoodQuestionario = () => {
                       </div>
                     </div>
 
-                    {/* Barriere (solo se rilevanza >= 4 o orizzonte entro 1-2 anni) */}
+                    {/* ===== Barriere (condizionale) ===== */}
                     {(trendDetails.rilevanza! >= 4 ||
                       ["12mesi", "1-2anni"].includes(
                         trendDetails.orizzonte || ""
@@ -864,7 +777,7 @@ const AgriFoodQuestionario = () => {
             </div>
           )}
 
-          {/* Section 4: Conclusion */}
+          {/* ===== Sezione 4: Conclusione ===== */}
           {currentSection === 4 && (
             <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 text-center">
               <div className="mb-8">
@@ -938,7 +851,7 @@ const AgriFoodQuestionario = () => {
             </div>
           )}
 
-          {/* Navigation */}
+          {/* ===== Navigazione tra sezioni ===== */}
           <div className="flex justify-between items-center mt-8">
             <button
               onClick={currentSection === 3 ? prevTrend : prevSection}
