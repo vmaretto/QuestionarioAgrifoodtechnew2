@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import * as Icons from "lucide-react";
 import { questionnaireAPI } from "./api/questionnaire";
 
@@ -34,12 +34,12 @@ const AgriFoodQuestionario = () => {
   // ✅ ANNOTARE GLI ARRAY E GLI OGGETTI VUOTI
   const [formData, setFormData] = useState<FormData>({
     dimensione: "",
-    segmento: [] as string[],                       // ✅ TIPO ATTESO: string[]
+    segmento: [] as string[], // ✅ TIPO ATTESO: string[]
     export: "",
     digitalizzazione: "",
     budget: "",
     collaborazioni: "",
-    trends: [] as string[],                          // ✅ TIPO ATTESO: string[]
+    trends: [] as string[], // ✅ TIPO ATTESO: string[]
     trendDetails: {} as { [trendId: string]: TrendDetail }, // ✅ TIPO ATTESO: { [k:string]:TrendDetail }
   });
 
@@ -53,19 +53,97 @@ const AgriFoodQuestionario = () => {
 
   // ────────── DATI STATICI ──────────
   const trends = [
-    { id: "automazione", name: "Automazione e robotica industriale", category: "trasformazione", icon: "🤖", color: "from-blue-500 to-purple-600" },
-    { id: "ai-processi", name: "AI per processi produttivi", category: "trasformazione", icon: "🧠", color: "from-purple-500 to-pink-600" },
-    { id: "biotech", name: "Biotecnologie e fermentazione", category: "trasformazione", icon: "🧬", color: "from-green-500 to-teal-600" },
-    { id: "conservazione", name: "Tecnologie di conservazione", category: "trasformazione", icon: "❄️", color: "from-cyan-500 to-blue-600" },
-    { id: "packaging", name: "Packaging sostenibile", category: "trasformazione", icon: "📦", color: "from-emerald-500 to-green-600" },
-    { id: "smart-retail", name: "Smart retail", category: "distribuzione", icon: "🏪", color: "from-orange-500 to-red-600" },
-    { id: "ecommerce", name: "E-commerce avanzato", category: "distribuzione", icon: "💻", color: "from-indigo-500 to-purple-600" },
-    { id: "blockchain", name: "Tracciabilità blockchain", category: "distribuzione", icon: "🔗", color: "from-slate-500 to-gray-600" },
-    { id: "crm", name: "CRM e personalizzazione", category: "distribuzione", icon: "🎯", color: "from-pink-500 to-rose-600" },
-    { id: "ai-logistica", name: "AI per logistica", category: "logistica", icon: "🚚", color: "from-yellow-500 to-orange-600" },
-    { id: "cold-chain", name: "Cold chain 4.0", category: "logistica", icon: "🌡️", color: "from-blue-400 to-cyan-600" },
-    { id: "automazione-log", name: "Automazione logistica", category: "logistica", icon: "🏭", color: "from-gray-500 to-slate-600" },
-    { id: "quick-commerce", name: "Quick commerce", category: "logistica", icon: "⚡", color: "from-amber-500 to-yellow-600" },
+    {
+      id: "automazione",
+      name: "Automazione e robotica industriale",
+      category: "trasformazione",
+      icon: "🤖",
+      color: "from-blue-500 to-purple-600",
+    },
+    {
+      id: "ai-processi",
+      name: "AI per processi produttivi",
+      category: "trasformazione",
+      icon: "🧠",
+      color: "from-purple-500 to-pink-600",
+    },
+    {
+      id: "biotech",
+      name: "Biotecnologie e fermentazione",
+      category: "trasformazione",
+      icon: "🧬",
+      color: "from-green-500 to-teal-600",
+    },
+    {
+      id: "conservazione",
+      name: "Tecnologie di conservazione",
+      category: "trasformazione",
+      icon: "❄️",
+      color: "from-cyan-500 to-blue-600",
+    },
+    {
+      id: "packaging",
+      name: "Packaging sostenibile",
+      category: "trasformazione",
+      icon: "📦",
+      color: "from-emerald-500 to-green-600",
+    },
+    {
+      id: "smart-retail",
+      name: "Smart retail",
+      category: "distribuzione",
+      icon: "🏪",
+      color: "from-orange-500 to-red-600",
+    },
+    {
+      id: "ecommerce",
+      name: "E-commerce avanzato",
+      category: "distribuzione",
+      icon: "💻",
+      color: "from-indigo-500 to-purple-600",
+    },
+    {
+      id: "blockchain",
+      name: "Tracciabilità blockchain",
+      category: "distribuzione",
+      icon: "🔗",
+      color: "from-slate-500 to-gray-600",
+    },
+    {
+      id: "crm",
+      name: "CRM e personalizzazione",
+      category: "distribuzione",
+      icon: "🎯",
+      color: "from-pink-500 to-rose-600",
+    },
+    {
+      id: "ai-logistica",
+      name: "AI per logistica",
+      category: "logistica",
+      icon: "🚚",
+      color: "from-yellow-500 to-orange-600",
+    },
+    {
+      id: "cold-chain",
+      name: "Cold chain 4.0",
+      category: "logistica",
+      icon: "🌡️",
+      color: "from-blue-400 to-cyan-600",
+    },
+    {
+      id: "automazione-log",
+      name: "Automazione logistica",
+      category: "logistica",
+      icon: "🏭",
+      color: "from-gray-500 to-slate-600",
+    },
+    {
+      id: "quick-commerce",
+      name: "Quick commerce",
+      category: "logistica",
+      icon: "⚡",
+      color: "from-amber-500 to-yellow-600",
+    },
   ];
 
   const sections = [
@@ -309,11 +387,31 @@ const AgriFoodQuestionario = () => {
                 </label>
                 <div className="space-y-2">
                   {[
-                    { id: "produzione", label: "Produzione primaria/agricola", icon: "🌾" },
-                    { id: "trasformazione", label: "Trasformazione alimentare", icon: "🏭" },
-                    { id: "packaging", label: "Packaging e confezionamento", icon: "📦" },
-                    { id: "logistica", label: "Logistica e trasporto", icon: "🚚" },
-                    { id: "distribuzione", label: "Distribuzione e vendita", icon: "🛒" },
+                    {
+                      id: "produzione",
+                      label: "Produzione primaria/agricola",
+                      icon: "🌾",
+                    },
+                    {
+                      id: "trasformazione",
+                      label: "Trasformazione alimentare",
+                      icon: "🏭",
+                    },
+                    {
+                      id: "packaging",
+                      label: "Packaging e confezionamento",
+                      icon: "📦",
+                    },
+                    {
+                      id: "logistica",
+                      label: "Logistica e trasporto",
+                      icon: "🚚",
+                    },
+                    {
+                      id: "distribuzione",
+                      label: "Distribuzione e vendita",
+                      icon: "🛒",
+                    },
                   ].map((segment) => (
                     <label
                       key={segment.id}
@@ -696,7 +794,9 @@ const AgriFoodQuestionario = () => {
                               <option value="">Seleziona...</option>
                               <option value="0">0 €</option>
                               <option value="<50k">Meno di 50.000 €</option>
-                              <option value="50-200k">50.000 - 200.000 €</option>
+                              <option value="50-200k">
+                                50.000 - 200.000 €
+                              </option>
                               <option value=">200k">Oltre 200.000 €</option>
                             </select>
                           </div>
