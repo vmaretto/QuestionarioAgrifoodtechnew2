@@ -1,11 +1,14 @@
-const API_URL = 'https://risposte-questionario.glitch.me/api';
+// src/api/questionnaire.ts
+
+const BASE_URL = "https://risposte-questionario.glitch.me";
+const API_URL = `${BASE_URL}/api`;
 
 export const questionnaireAPI = {
   submit: async (data: any) => {
     const response = await fetch(`${API_URL}/survey`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
@@ -13,11 +16,11 @@ export const questionnaireAPI = {
   },
 
   exportCSV: async () => {
-    window.open(`${API_URL}/export/aziende.csv`, '_blank');
+    window.open(`${BASE_URL}/export/aziende.csv`, "_blank");
   },
 
   exportRisposteCSV: async () => {
-    window.open(`${API_URL}/export/risposte.csv`, '_blank');
+    window.open(`${BASE_URL}/export/risposte.csv`, "_blank");
   },
 
   getResponses: async () => {
