@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import * as Icons from "lucide-react";
 import { questionnaireAPI } from "./api/questionnaire";
 
