@@ -27,6 +27,22 @@ type FormData = {
   trendDetails: { [trendId: string]: TrendDetail };
 };
 
+// —— Nuove interfaccie per tipizzare i dizionari ——
+
+// Interfaccia per ogni voce di categoryInfo
+interface CategoryInfo {
+  title: string;
+  icon: string;
+  description: string;
+  displayName: string;
+}
+
+// Interfaccia per ogni voce di subcategoryInfo
+interface SubcategoryInfo {
+  icon: string;
+  description: string;
+}
+
 const AgriFoodQuestionario = () => {
   // ────────── STATO ──────────
   const [currentSection, setCurrentSection] = useState<number>(0);
@@ -51,247 +67,383 @@ const AgriFoodQuestionario = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
 
-  // ────────── DATI STATICI ──────────
+  // ────────── DATI STATICI RIORGANIZZATI ──────────
   const trends = [
+    // ════════════ 7.1 TRASFORMAZIONE DEGLI ALIMENTI ════════════
+    // ──── Processi produttivi innovativi ────
     {
-      id: "automazione",
-      name: "Processi produttivi innovativi - Automazione e robotica industriale",
-      category: "trasformazione",
+      id: "TE1",
+      name: "Automazione e robotica industriale",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Processi produttivi innovativi",
       icon: "🤖",
-      color: "from-blue-500 to-purple-600",
+      color: "from-blue-500 to-blue-700",
     },
     {
-      id: "ai-processi",
-      name: "Processi produttivi innovativi - Intelligenza Artificiale e IoT in fabbrica",
-      category: "trasformazione",
+      id: "TE2",
+      name: "Intelligenza Artificiale e IoT in fabbrica",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Processi produttivi innovativi",
       icon: "🧠",
-      color: "from-purple-500 to-pink-600",
+      color: "from-blue-500 to-blue-700",
     },
     {
-      id: "biotech",
-      name: "Processi produttivi innovativi - Biotecnologie e fermentazione avanzata",
-      category: "trasformazione",
+      id: "TE3",
+      name: "Biotecnologie e fermentazione avanzata",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Processi produttivi innovativi",
       icon: "🧬",
-      color: "from-green-500 to-teal-600",
+      color: "from-blue-500 to-blue-700",
     },
     {
-      id: "stampa-3d",
-      name: "Processi produttivi innovativi - Stampa 3D di alimenti",
-      category: "trasformazione",
-      icon: "",
-      color: "from-green-500 to-teal-600",
-    },
-    {
-      id: "trattamenti",
-      name: "Processi produttivi innovativi - Trattamenti non termici",
-      category: "trasformazione",
-      icon: "",
-      color: "from-green-500 to-teal-600",
-    },
-    {
-      id: "conservanti",
-      name: "Processi produttivi innovativi - Conservanti naturali e biopreservazione",
-      category: "trasformazione",
-      icon: "",
-      color: "from-green-500 to-teal-600",
-    },
-    {
-      id: "atmosfere",
-      name: "Processi produttivi innovativi - Atmosfere controllate e packaging protettivo",
-      category: "trasformazione",
-      icon: "",
-      color: "from-green-500 to-teal-600",
-    },
-    {
-      id: "fermentazioni",
-      name: "Processi produttivi innovativi - Fermentazioni e maturazioni controllate",
-      category: "trasformazione",
-      icon: "",
-      color: "from-green-500 to-teal-600",
-    },
-    {
-      id: "ingredienti",
-      name: "Processi produttivi innovativi - Ingredienti riformulati per gusto e salute",
-      category: "trasformazione",
-      icon: "",
-      color: "from-green-500 to-teal-600",
-    },
-    {
-      id: "mild-processing",
-      name: "Processi produttivi innovativi - Tecniche di lavorazione dolci (mild processing)",
-      category: "trasformazione",
-      icon: "",
-      color: "from-green-500 to-teal-600",
-    },
-    {
-      id: "bio-based",
-      name: "Processi produttivi innovativi - Materiali sostenibili e bio-based",
-      category: "trasformazione",
-      icon: "",
-      color: "from-green-500 to-teal-600",
-    },
-    {
-      id: "conservazione",
-      name: "Processi produttivi innovativi - Packaging attivo per la conservazione",
-      category: "trasformazione",
-      icon: "❄️",
-      color: "from-cyan-500 to-blue-600",
-    },
-    {
-      id: "packaging",
-      name: "Processi produttivi innovativi - Imballaggi intelligenti e connessi",
-      category: "trasformazione",
-      icon: "📦",
-      color: "from-emerald-500 to-green-600",
-    },
-    {
-      id: "smart-retail",
-      name: "Canali di vendita fisici - Smart Store e Retail Immersivo",
-      category: "distribuzione",
-      icon: "🏪",
-      color: "from-orange-500 to-red-600",
-    },
-    {
-      id: "automazione-retail",
-      name: "Canali di vendita fisici - Automazione retail e vending intelligente",
-      category: "distribuzione",
-      icon: "🏪",
-      color: "from-orange-500 to-red-600",
-    },
-    {
-      id: "tracciabilità",
-      name: "Canali di vendita fisici - Tracciabilità in-store con Blockchain",
-      category: "distribuzione",
-      icon: "🏪",
-      color: "from-orange-500 to-red-600",
-    },
-    {
-      id: "raccomandazione",
-      name: "Canali digitali: e-commerce e piattaforme D2C - Sistemi di raccomandazione basati su Intelligenza Artificiale",
-      category: "distribuzione",
-      icon: "🏪",
-      color: "from-orange-500 to-red-600",
-    },
-    {
-      id: "subscription",
-      name: "Canali digitali: e-commerce e piattaforme D2C - Subscription box e vendita diretta D2C",
-      category: "distribuzione",
-      icon: "🏪",
-      color: "from-orange-500 to-red-600",
-    },
-    {
-      id: "social-commerce",
-      name: "Canali digitali: e-commerce e piattaforme D2C - Social commerce e Live Shopping",
-      category: "distribuzione",
-      icon: "🏪",
-      color: "from-orange-500 to-red-600",
-    },
-    {
-      id: "marketplace",
-      name: "Mercati domestici/internazionali: Made in Italy - Marketplace e piattaforme integrate",
-      category: "distribuzione",
-      icon: "🏪",
-      color: "from-orange-500 to-red-600",
-    },
-    {
-      id: "blockchain-autenticità",
-      name: "Mercati domestici/internazionali: Made in Italy - Blockchain per l’autenticità del prodotto",
-      category: "distribuzione",
-      icon: "🏪",
-      color: "from-orange-500 to-red-600",
-    },
-    {
-      id: "quick-commerce",
-      name: "Evoluzione comportamento del consumatore e nuovi modelli - Quick commerce e dark store",
-      category: "distribuzione",
-      icon: "🏪",
-      color: "from-orange-500 to-red-600",
-    },
-    {
-      id: "metaverso",
-      name: "Evoluzione comportamento del consumatore e nuovi modelli - Esperienze immersive e metaverso",
-      category: "distribuzione",
-      icon: "💻",
-      color: "from-indigo-500 to-purple-600",
-    },
-    {
-      id: "personalizzazione",
-      name: "Evoluzione comportamento del consumatore e nuovi modelli - Personalizzazione e CRM evoluto",
-      category: "distribuzione",
-      icon: "🔗",
-      color: "from-slate-500 to-gray-600",
-    },
-    {
-      id: "etichette-intelligenti",
-      name: "Evoluzione comportamento del consumatore e nuovi modelli - Etichette intelligenti e tracciabilità",
-      category: "distribuzione",
+      id: "TE4",
+      name: "Stampa 3D di alimenti",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Processi produttivi innovativi",
       icon: "🎯",
-      color: "from-pink-500 to-rose-600",
+      color: "from-blue-500 to-blue-700",
+    },
+
+    // ──── Tecnologie per la conservazione degli alimenti ────
+    {
+      id: "TE5",
+      name: "Trattamenti non termici",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Tecnologie per la conservazione degli alimenti",
+      icon: "⚡",
+      color: "from-emerald-500 to-emerald-700",
     },
     {
-      id: "ottimizzazione-percorsi",
-      name: "Ottimizzazione dei flussi e delle risorse - Intelligenza Artificiale per ottimizzazione dei percorsi e delle consegne",
-      category: "logistica",
-      icon: "🚚",
-      color: "from-yellow-500 to-orange-600",
+      id: "TE6",
+      name: "Conservanti naturali e biopreservazione",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Tecnologie per la conservazione degli alimenti",
+      icon: "🌿",
+      color: "from-emerald-500 to-emerald-700",
     },
     {
-      id: "Smart-Inventory",
-      name: "Ottimizzazione dei flussi e delle risorse - Smart Inventory Management e previsione della domanda",
-      category: "logistica",
-      icon: "🌡️",
-      color: "from-blue-400 to-cyan-600",
+      id: "TE7",
+      name: "Atmosfere controllate e packaging protettivo",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Tecnologie per la conservazione degli alimenti",
+      icon: "💨",
+      color: "from-emerald-500 to-emerald-700",
+    },
+
+    // ──── Miglioramento delle proprietà organolettiche ────
+    {
+      id: "TE8",
+      name: "Fermentazioni e maturazioni controllate",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Miglioramento delle proprietà organolettiche",
+      icon: "🦠",
+      color: "from-purple-500 to-purple-700",
     },
     {
-      id: "Sistemi-integrati-WMS",
-      name: "Ottimizzazione dei flussi e delle risorse - Sistemi integrati WMS e TMS",
-      category: "logistica",
+      id: "TE9",
+      name: "Ingredienti riformulati per gusto e salute",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Miglioramento delle proprietà organolettiche",
+      icon: "🥗",
+      color: "from-purple-500 to-purple-700",
+    },
+    {
+      id: "TE10",
+      name: "Tecniche di lavorazione dolci (mild processing)",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Miglioramento delle proprietà organolettiche",
+      icon: "🌊",
+      color: "from-purple-500 to-purple-700",
+    },
+
+    // ──── Packaging e confezionamento innovativo ────
+    {
+      id: "TE11",
+      name: "Materiali sostenibili e bio-based",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Packaging e confezionamento innovativo",
+      icon: "♻️",
+      color: "from-teal-500 to-teal-700",
+    },
+    {
+      id: "TE12",
+      name: "Packaging attivo per la conservazione",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Packaging e confezionamento innovativo",
+      icon: "🛡️",
+      color: "from-teal-500 to-teal-700",
+    },
+    {
+      id: "TE13",
+      name: "Imballaggi intelligenti e connessi",
+      category: "Trasformazione degli alimenti",
+      subcategory: "Packaging e confezionamento innovativo",
+      icon: "📦",
+      color: "from-teal-500 to-teal-700",
+    },
+
+    // ════════════ 7.2 MERCATI E CANALI DI DISTRIBUZIONE ════════════
+    // ──── Canali di vendita fisici ────
+    {
+      id: "TE14",
+      name: "Smart Store e Retail Immersivo",
+      category: "Mercati e Canali di distribuzione",
+      subcategory: "Canali di vendita fisici",
+      icon: "🏪",
+      color: "from-orange-500 to-orange-700",
+    },
+    {
+      id: "TE15",
+      name: "Automazione retail e vending intelligente",
+      category: "Mercati e Canali di distribuzione",
+      subcategory: "Canali di vendita fisici",
+      icon: "🤖",
+      color: "from-orange-500 to-orange-700",
+    },
+    {
+      id: "TE16",
+      name: "Tracciabilità in-store con Blockchain",
+      category: "Mercati e Canali di distribuzione",
+      subcategory: "Canali di vendita fisici",
+      icon: "🔗",
+      color: "from-orange-500 to-orange-700",
+    },
+
+    // ──── Canali digitali: e-commerce e piattaforme D2C ────
+    {
+      id: "TE17",
+      name: "Sistemi di raccomandazione basati su Intelligenza Artificiale",
+      category: "Mercati e Canali di distribuzione",
+      subcategory: "Canali digitali: e-commerce e piattaforme D2C",
+      icon: "🎯",
+      color: "from-pink-500 to-pink-700",
+    },
+    {
+      id: "TE18",
+      name: "Subscription box e vendita diretta D2C",
+      category: "Mercati e Canali di distribuzione",
+      subcategory: "Canali digitali: e-commerce e piattaforme D2C",
+      icon: "📮",
+      color: "from-pink-500 to-pink-700",
+    },
+    {
+      id: "TE19",
+      name: "Social commerce e Live Shopping",
+      category: "Mercati e Canali di distribuzione",
+      subcategory: "Canali digitali: e-commerce e piattaforme D2C",
+      icon: "📱",
+      color: "from-pink-500 to-pink-700",
+    },
+
+    // ──── Mercati domestici/internazionali: Made in Italy ────
+    {
+      id: "TE20",
+      name: "Marketplace e piattaforme integrate",
+      category: "Mercati e Canali di distribuzione",
+      subcategory: "Mercati domestici/internazionali: Made in Italy",
+      icon: "🌐",
+      color: "from-red-500 to-red-700",
+    },
+    {
+      id: "TE21",
+      name: "Blockchain per l'autenticità del prodotto",
+      category: "Mercati e Canali di distribuzione",
+      subcategory: "Mercati domestici/internazionali: Made in Italy",
+      icon: "🔏",
+      color: "from-red-500 to-red-700",
+    },
+
+    // ──── Evoluzione comportamento del consumatore e nuovi modelli ────
+    {
+      id: "TE22",
+      name: "Quick commerce e dark store",
+      category: "Mercati e Canali di distribuzione",
+      subcategory: "Evoluzione comportamento del consumatore e nuovi modelli",
+      icon: "⚡",
+      color: "from-indigo-500 to-indigo-700",
+    },
+    {
+      id: "TE23",
+      name: "Esperienze immersive e metaverso",
+      category: "Mercati e Canali di distribuzione",
+      subcategory: "Evoluzione comportamento del consumatore e nuovi modelli",
+      icon: "🥽",
+      color: "from-indigo-500 to-indigo-700",
+    },
+    {
+      id: "TE24",
+      name: "Personalizzazione e CRM evoluto",
+      category: "Mercati e Canali di distribuzione",
+      subcategory: "Evoluzione comportamento del consumatore e nuovi modelli",
+      icon: "👤",
+      color: "from-indigo-500 to-indigo-700",
+    },
+    {
+      id: "TE25",
+      name: "Etichette intelligenti e tracciabilità",
+      category: "Mercati e Canali di distribuzione",
+      subcategory: "Evoluzione comportamento del consumatore e nuovi modelli",
+      icon: "🏷️",
+      color: "from-indigo-500 to-indigo-700",
+    },
+
+    // ════════════ 7.3 LOGISTICA E DELIVERY ════════════
+    // ──── Ottimizzazione dei flussi e delle risorse ────
+    {
+      id: "TE26",
+      name: "Intelligenza Artificiale per ottimizzazione dei percorsi e delle consegne",
+      category: "Logistica e Delivery",
+      subcategory: "Ottimizzazione dei flussi e delle risorse",
+      icon: "🗺️",
+      color: "from-cyan-500 to-cyan-700",
+    },
+    {
+      id: "TE27",
+      name: "Smart Inventory Management e previsione della domanda",
+      category: "Logistica e Delivery",
+      subcategory: "Ottimizzazione dei flussi e delle risorse",
+      icon: "📊",
+      color: "from-cyan-500 to-cyan-700",
+    },
+    {
+      id: "TE28",
+      name: "Sistemi integrati WMS e TMS",
+      category: "Logistica e Delivery",
+      subcategory: "Ottimizzazione dei flussi e delle risorse",
       icon: "🏭",
-      color: "from-gray-500 to-slate-600",
+      color: "from-cyan-500 to-cyan-700",
+    },
+
+    // ──── Tracciabilità, qualità e sicurezza alimentare ────
+    {
+      id: "TE29",
+      name: "Monitoraggio intelligente della logistica",
+      category: "Logistica e Delivery",
+      subcategory: "Tracciabilità, qualità e sicurezza alimentare",
+      icon: "📡",
+      color: "from-green-500 to-green-700",
     },
     {
-      id: "monitoraggio-intelligente",
-      name: "Tracciabilità, qualità e sicurezza alimentare - Monitoraggio intelligente della logistica",
-      category: "logistica",
-      icon: "⚡",
-      color: "from-amber-500 to-yellow-600",
+      id: "TE30",
+      name: "Cold chain decentralizzata e adattiva",
+      category: "Logistica e Delivery",
+      subcategory: "Tracciabilità, qualità e sicurezza alimentare",
+      icon: "❄️",
+      color: "from-green-500 to-green-700",
     },
     {
-      id: "cold-chain",
-      name: "Tracciabilità, qualità e sicurezza alimentare - Cold chain decentralizzata e adattiva",
-      category: "logistica",
-      icon: "⚡",
-      color: "from-amber-500 to-yellow-600",
+      id: "TE31",
+      name: "Sistemi distribuiti per la tracciabilità di filiera",
+      category: "Logistica e Delivery",
+      subcategory: "Tracciabilità, qualità e sicurezza alimentare",
+      icon: "🌐",
+      color: "from-green-500 to-green-700",
+    },
+
+    // ──── Automazione e logistica urbana intelligente ────
+    {
+      id: "TE32",
+      name: "Robotica e automazione nei magazzini",
+      category: "Logistica e Delivery",
+      subcategory: "Automazione e logistica urbana intelligente",
+      icon: "🤖",
+      color: "from-slate-500 to-slate-700",
     },
     {
-      id: "sistemi-distribuiti",
-      name: "Tracciabilità, qualità e sicurezza alimentare - Sistemi distribuiti per la tracciabilità di filiera",
-      category: "logistica",
-      icon: "⚡",
-      color: "from-amber-500 to-yellow-600",
+      id: "TE33",
+      name: "Micro-fulfillment centers",
+      category: "Logistica e Delivery",
+      subcategory: "Automazione e logistica urbana intelligente",
+      icon: "📦",
+      color: "from-slate-500 to-slate-700",
     },
     {
-      id: "Robotica-automazione",
-      name: "Automazione e logistica urbana intelligente - Robotica e automazione nei magazzini",
-      category: "logistica",
-      icon: "⚡",
-      color: "from-amber-500 to-yellow-600",
-    },
-    {
-      id: "Micro-fulfillment",
-      name: "Automazione e logistica urbana intelligente - Micro-fulfillment centers",
-      category: "logistica",
-      icon: "⚡",
-      color: "from-amber-500 to-yellow-600",
-    },
-    {
-      id: "consegna",
-      name: "Automazione e logistica urbana intelligente - Consegna autonoma e logistica dell'ultimo miglio sostenibile",
-      category: "logistica",
-      icon: "⚡",
-      color: "from-amber-500 to-yellow-600",
+      id: "TE34",
+      name: "Consegna autonoma e logistica dell'ultimo miglio sostenibile",
+      category: "Logistica e Delivery",
+      subcategory: "Automazione e logistica urbana intelligente",
+      icon: "🚁",
+      color: "from-slate-500 to-slate-700",
     },
   ];
+
+  // ────────── INFORMAZIONI AGGIUNTIVE ──────────
+  // ⟹ ora categoryInfo è dichiarato con Record<string, CategoryInfo>
+  const categoryInfo: Record<string, CategoryInfo> = {
+    "Trasformazione degli alimenti": {
+      title: "Trasformazione degli alimenti",
+      icon: "⚙️",
+      description:
+        "Tecnologie per la produzione, conservazione e miglioramento degli alimenti",
+      displayName: "TRASFORMAZIONE",
+    },
+    "Mercati e Canali di distribuzione": {
+      title: "Mercati e Canali di distribuzione",
+      icon: "🛒",
+      description: "Innovazioni nei canali di vendita fisici e digitali",
+      displayName: "DISTRIBUZIONE",
+    },
+    "Logistica e Delivery": {
+      title: "Logistica e Delivery",
+      icon: "🚚",
+      description: "Soluzioni per ottimizzazione logistica e consegne",
+      displayName: "LOGISTICA",
+    },
+  };
+
+  // ⟹ ora subcategoryInfo è dichiarato con Record<string, SubcategoryInfo>
+  const subcategoryInfo: Record<string, SubcategoryInfo> = {
+    // Trasformazione degli alimenti
+    "Processi produttivi innovativi": {
+      icon: "🔧",
+      description:
+        "Automazione, AI, biotecnologie e stampa 3D per la produzione",
+    },
+    "Tecnologie per la conservazione degli alimenti": {
+      icon: "🛡️",
+      description: "Trattamenti innovativi e atmosfere controllate",
+    },
+    "Miglioramento delle proprietà organolettiche": {
+      icon: "👅",
+      description: "Tecniche per migliorare gusto, aroma e texture",
+    },
+    "Packaging e confezionamento innovativo": {
+      icon: "📦",
+      description: "Materiali sostenibili e imballaggi intelligenti",
+    },
+
+    // Mercati e Canali di distribuzione
+    "Canali di vendita fisici": {
+      icon: "🏪",
+      description: "Smart store, automazione e tracciabilità in negozio",
+    },
+    "Canali digitali: e-commerce e piattaforme D2C": {
+      icon: "💻",
+      description: "E-commerce, subscription e social commerce",
+    },
+    "Mercati domestici/internazionali: Made in Italy": {
+      icon: "🇮🇹",
+      description: "Marketplace e certificazione blockchain per export",
+    },
+    "Evoluzione comportamento del consumatore e nuovi modelli": {
+      icon: "✨",
+      description: "Quick commerce, metaverso e personalizzazione",
+    },
+
+    // Logistica e Delivery
+    "Ottimizzazione dei flussi e delle risorse": {
+      icon: "📈",
+      description: "AI e sistemi integrati per efficienza logistica",
+    },
+    "Tracciabilità, qualità e sicurezza alimentare": {
+      icon: "🔍",
+      description: "Monitoraggio intelligente e cold chain",
+    },
+    "Automazione e logistica urbana intelligente": {
+      icon: "🏙️",
+      description: "Robotica, micro-fulfillment e consegne autonome",
+    },
+  };
 
   const sections = [
     { title: "Benvenuto", subtitle: "Innovazione AgriFoodTech Lazio" },
@@ -504,7 +656,7 @@ const AgriFoodQuestionario = () => {
             <div className="bg-white rounded-3xl shadow-xl p-8">
               <h2 className="text-2xl font-bold mb-6">Profilo Aziendale</h2>
 
-              {/* Dimensione */}
+              {/* —————— Dimensione aziendale —————— */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Dimensione aziendale
@@ -527,66 +679,118 @@ const AgriFoodQuestionario = () => {
                 </div>
               </div>
 
-              {/* Segmento (multi-selezione) */}
+              {/* —————— Multi‐selezione dei 9 trend —————— */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Segmento della filiera (multi-selezione)
+                  Seleziona i trend più rilevanti per la tua azienda
                 </label>
-                <div className="space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {[
                     {
-                      id: "produzione",
-                      label: "Produzione primaria/agricola",
-                      icon: "🌾",
+                      id: "1",
+                      icon: <Icons.Leaf className="w-6 h-6 text-green-600" />,
+                      name: "Sostenibilità come driver principale",
+                      description:
+                        "La filiera si riprogetta per ridurre sprechi, emissioni e materiali non riciclabili: obiettivi normativi UE e preferenze dei consumatori spingono verso processi circolari, energy-&-water saving, packaging riutilizzabile e trasporti low-carbon.",
                     },
                     {
-                      id: "trasformazione",
-                      label: "Trasformazione alimentare",
-                      icon: "🏭",
+                      id: "2",
+                      icon: (
+                        <Icons.Settings className="w-6 h-6 text-purple-600" />
+                      ),
+                      name: "Personalizzazione e qualità premium",
+                      description:
+                        "Dal product design alla consegna, l’offerta si adatta ai bisogni nutrizionali e ai gusti del singolo, trasformando l’esperienza in valore aggiunto e giustificando prezzi più alti per soluzioni “su misura”.",
                     },
                     {
-                      id: "packaging",
-                      label: "Packaging e confezionamento",
-                      icon: "📦",
+                      id: "3",
+                      icon: <Icons.Globe className="w-6 h-6 text-blue-600" />,
+                      name: "Omnicanalità e customer journey integrata",
+                      description:
+                        "Canali fisici, digitali e social convergono in un percorso d’acquisto senza soluzione di continuità; dati e stock sono sincronizzati per garantire coerenza di assortimento, prezzo e servizio, qualunque touch-point scelga il cliente.",
                     },
                     {
-                      id: "logistica",
-                      label: "Logistica e trasporto",
-                      icon: "🚚",
+                      id: "4",
+                      icon: (
+                        <Icons.Activity className="w-6 h-6 text-indigo-600" />
+                      ),
+                      name: "Efficienza e resilienza della filiera",
+                      description:
+                        "L’uso di sensori, IA e analytics ottimizza risorse e tempi, riduce i rischi di fermo, permette di reagire rapidamente a shock sanitari, climatici o geopolitici, mantenendo stabilità di qualità, costi e disponibilità del prodotto.",
                     },
                     {
-                      id: "distribuzione",
-                      label: "Distribuzione e vendita",
-                      icon: "🛒",
+                      id: "5",
+                      icon: <Icons.Code className="w-6 h-6 text-teal-600" />,
+                      name: "Digitalizzazione e automazione diffusa",
+                      description:
+                        "Robot collaborativi, magazzini automatici, blockchain e piattaforme cloud tracciano, movimentano e controllano in tempo reale materie prime, semilavorati e prodotti finiti, abbattendo errori manuali e costi operativi.",
                     },
-                  ].map((segment) => (
+                    {
+                      id: "6",
+                      icon: (
+                        <Icons.ShoppingCart className="w-6 h-6 text-red-600" />
+                      ),
+                      name: "Nuovi mercati e prodotti di frontiera",
+                      description:
+                        "Novel food, plant-based, funzionali e nutraceutici ampliano l’offerta: tecniche di processo avanzate ne garantiscono gusto e sicurezza, mentre canali digital-first accelerano l’adozione presso target attenti a salute ed etica.",
+                    },
+                    {
+                      id: "7",
+                      icon: (
+                        <Icons.MapPin className="w-6 h-6 text-orange-600" />
+                      ),
+                      name: "Internazionalizzazione digitale e Made in Italy distribuito",
+                      description:
+                        "E-commerce cross-border, marketplace D2C e food-box tematiche portano i prodotti italiani direttamente ai consumatori globali, valorizzando storytelling territoriale e certificazioni d’origine senza passare dai canali tradizionali.",
+                    },
+                    {
+                      id: "8",
+                      icon: <Icons.Users className="w-6 h-6 text-yellow-600" />,
+                      name: "Modelli emergenti di acquisto e consumo",
+                      description:
+                        "Community-group buying, abbonamenti, social-commerce e contenuti live trasformano il consumatore in co-creatore e ambassador del brand, influenzando formulazione, confezione e dinamiche di lancio dei prodotti.",
+                    },
+                    {
+                      id: "9",
+                      icon: <Icons.Truck className="w-6 h-6 text-cyan-600" />,
+                      name: "Logistica dell’ultimo miglio evoluta",
+                      description:
+                        "Micro-hub urbani, flotte elettriche, robot e droni abiliteranno consegne rapide, tracciate e a basso impatto, integrandosi con produzione just-in-time e canali omnicanale per garantire freschezza, convenienza e sostenibilità.",
+                    },
+                  ].map((trend) => (
                     <label
-                      key={segment.id}
-                      className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                        formData.segmento.includes(segment.id)
+                      key={trend.id}
+                      className={`flex flex-col justify-between p-4 bg-white rounded-2xl border-2 cursor-pointer transition-all hover:shadow-md ${
+                        formData.segmento.includes(trend.id)
                           ? "border-green-500 bg-green-50"
-                          : "border-gray-200 hover:border-gray-300"
+                          : "border-gray-200"
                       }`}
                     >
+                      <div className="flex items-center mb-2">
+                        <div className="mr-3">{trend.icon}</div>
+                        <h4 className="font-semibold text-gray-800">
+                          {trend.name}
+                        </h4>
+                      </div>
+                      <p className="text-xs text-gray-600 mb-4 leading-snug">
+                        {trend.description}
+                      </p>
+
                       <input
                         type="checkbox"
                         className="sr-only"
-                        checked={formData.segmento.includes(segment.id)}
-                        onChange={() =>
-                          handleMultiSelect("segmento", segment.id)
-                        }
+                        checked={formData.segmento.includes(trend.id)}
+                        onChange={() => handleMultiSelect("segmento", trend.id)}
                       />
-                      <span className="text-2xl mr-3">{segment.icon}</span>
-                      <span className="flex-1">{segment.label}</span>
-                      {formData.segmento.includes(segment.id) && (
-                        <Icons.Check className="w-5 h-5 text-green-600" />
+                      {formData.segmento.includes(trend.id) && (
+                        <Icons.Check className="w-5 h-5 text-green-600 self-end" />
                       )}
                     </label>
                   ))}
                 </div>
               </div>
 
-              {/* Quota export */}
+              {/* —————— Quota export —————— */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Quota export
@@ -610,7 +814,7 @@ const AgriFoodQuestionario = () => {
                 </div>
               </div>
 
-              {/* Livello di digitalizzazione */}
+              {/* —————— Livello di digitalizzazione —————— */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Livello di digitalizzazione
@@ -646,7 +850,6 @@ const AgriFoodQuestionario = () => {
               </div>
             </div>
           )}
-
           {/* ===== Sezione 2: Trend Selection ===== */}
           {currentSection === 2 && (
             <div className="bg-white rounded-3xl shadow-xl p-8">
@@ -677,59 +880,93 @@ const AgriFoodQuestionario = () => {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                {["trasformazione", "distribuzione", "logistica"].map(
-                  (category) => (
-                    <div key={category}>
-                      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                        {category === "trasformazione" && "🔧 Trasformazione"}
-                        {category === "distribuzione" && "🛍️ Distribuzione"}
-                        {category === "logistica" && "📍 Logistica"}
-                      </h3>
-                      <div className="grid md:grid-cols-2 gap-3">
-                        {trends
-                          .filter((t) => t.category === category)
-                          .map((trend) => (
-                            <button
-                              key={trend.id}
-                              onClick={() => handleTrendSelection(trend.id)}
-                              disabled={
-                                !selectedTrends.includes(trend.id) &&
-                                selectedTrends.length >= 4
-                              }
-                              className={`relative p-4 rounded-2xl border-2 transition-all text-left ${
-                                selectedTrends.includes(trend.id)
-                                  ? "border-transparent transform scale-105"
-                                  : selectedTrends.length >= 4
-                                  ? "border-gray-200 opacity-50 cursor-not-allowed"
-                                  : "border-gray-300 hover:border-gray-400 hover:shadow-md"
-                              }`}
-                            >
-                              {selectedTrends.includes(trend.id) && (
-                                <div
-                                  className={`absolute inset-0 bg-gradient-to-r ${trend.color} opacity-10 rounded-2xl`}
-                                ></div>
-                              )}
-                              <div className="relative flex items-center gap-3">
-                                <span className="text-2xl">{trend.icon}</span>
-                                <span
-                                  className={`flex-1 ${
-                                    selectedTrends.includes(trend.id)
-                                      ? "font-semibold"
-                                      : ""
-                                  }`}
-                                >
-                                  {trend.name}
-                                </span>
-                                {selectedTrends.includes(trend.id) && (
-                                  <Icons.Check className="w-5 h-5 text-green-600" />
-                                )}
-                              </div>
-                            </button>
-                          ))}
+              <div className="space-y-6">
+                {/* Raggruppa per categoria principale */}
+                {Object.entries(categoryInfo).map(
+                  ([categoryKey, categoryData]) => {
+                    // Ottieni tutte le subcategorie per questa categoria
+                    const subcategories = [
+                      ...new Set(
+                        trends
+                          .filter((t) => t.category === categoryKey)
+                          .map((t) => t.subcategory)
+                      ),
+                    ];
+
+                    return (
+                      <div key={categoryKey} className="space-y-4">
+                        <h3 className="text-lg font-bold text-gray-700 flex items-center gap-2">
+                          <span className="text-2xl">{categoryData.icon}</span>
+                          {categoryData.displayName}
+                        </h3>
+
+                        {/* Mostra le tecnologie raggruppate per subcategoria */}
+                        {subcategories.map((subcategory) => (
+                          <div key={subcategory} className="ml-4">
+                            <h4 className="text-sm font-semibold text-gray-500 mb-2 flex items-center gap-2">
+                              <span>{subcategoryInfo[subcategory]?.icon}</span>
+                              {subcategory}
+                            </h4>
+                            <div className="grid md:grid-cols-2 gap-3">
+                              {trends
+                                .filter(
+                                  (t) =>
+                                    t.category === categoryKey &&
+                                    t.subcategory === subcategory
+                                )
+                                .map((trend) => (
+                                  <button
+                                    key={trend.id}
+                                    onClick={() =>
+                                      handleTrendSelection(trend.id)
+                                    }
+                                    disabled={
+                                      !selectedTrends.includes(trend.id) &&
+                                      selectedTrends.length >= 4
+                                    }
+                                    className={`relative p-4 rounded-2xl border-2 transition-all text-left ${
+                                      selectedTrends.includes(trend.id)
+                                        ? "border-transparent transform scale-105 shadow-lg"
+                                        : selectedTrends.length >= 4
+                                        ? "border-gray-200 opacity-50 cursor-not-allowed"
+                                        : "border-gray-300 hover:border-gray-400 hover:shadow-md"
+                                    }`}
+                                  >
+                                    {selectedTrends.includes(trend.id) && (
+                                      <div
+                                        className={`absolute inset-0 bg-gradient-to-r ${trend.color} opacity-10 rounded-2xl`}
+                                      ></div>
+                                    )}
+                                    <div className="relative flex items-center gap-3">
+                                      <span className="text-2xl">
+                                        {trend.icon}
+                                      </span>
+                                      <div className="flex-1">
+                                        <span
+                                          className={`block ${
+                                            selectedTrends.includes(trend.id)
+                                              ? "font-semibold"
+                                              : ""
+                                          }`}
+                                        >
+                                          {trend.name}
+                                        </span>
+                                        <span className="text-xs text-gray-500 mt-1">
+                                          {trend.id}
+                                        </span>
+                                      </div>
+                                      {selectedTrends.includes(trend.id) && (
+                                        <Icons.Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                                      )}
+                                    </div>
+                                  </button>
+                                ))}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                  )
+                    );
+                  }
                 )}
               </div>
             </div>
@@ -746,9 +983,7 @@ const AgriFoodQuestionario = () => {
                 if (!currentTrend) return null; // safety check
 
                 const trendDetails =
-                  formData.trendDetails[
-                    currentTrend.id as keyof typeof formData.trendDetails
-                  ] ?? {};
+                  formData.trendDetails[currentTrend.id] ?? {};
 
                 return (
                   <>
