@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import * as Icons from "lucide-react";
 import { questionnaireAPI } from "./api/questionnaire";
 
+// Tipo per trendDetails
 type TrendDetail = {
   familiarita?: number;
   esempi?: boolean;
@@ -13,11 +14,8 @@ type TrendDetail = {
   funding?: number;
 };
 
-type TrendDetails = {
-  [trendId: string]: TrendDetail;
-};
-
-const [formData, setFormData] = useState<{
+// Tipo per formData
+type FormData = {
   dimensione: string;
   segmento: string[];
   export: string;
@@ -25,21 +23,12 @@ const [formData, setFormData] = useState<{
   budget: string;
   collaborazioni: string;
   trends: string[];
-  trendDetails: TrendDetails;
-}>({
-  dimensione: "",
-  segmento: [],
-  export: "",
-  digitalizzazione: "",
-  budget: "",
-  collaborazioni: "",
-  trends: [],
-  trendDetails: {},
-});
+  trendDetails: { [trendId: string]: TrendDetail };
+};
 
 const AgriFoodQuestionario = () => {
-  const [currentSection, setCurrentSection] = useState(0);
-  const [formData, setFormData] = useState({
+  const [currentSection, setCurrentSection] = useState<number>(0);
+  const [formData, setFormData] = useState<FormData>({
     dimensione: "",
     segmento: [],
     export: "",
@@ -49,13 +38,14 @@ const AgriFoodQuestionario = () => {
     trends: [],
     trendDetails: {},
   });
-  const [selectedTrends, setSelectedTrends] = useState([]);
-  const [currentTrendIndex, setCurrentTrendIndex] = useState(0);
-  const [animateCard, setAnimateCard] = useState(false);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [selectedTrends, setSelectedTrends] = useState<string[]>([]);
+  const [currentTrendIndex, setCurrentTrendIndex] = useState<number>(0);
+  const [animateCard, setAnimateCard] = useState<boolean>(false);
+
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
 
   const trends = [
     {
@@ -165,15 +155,15 @@ const AgriFoodQuestionario = () => {
     return () => clearTimeout(timer);
   }, [currentSection, currentTrendIndex]);
 
-  const handleInputChange = (name: string, value: string) => {
+  const handleInputChange = (name: keyof FormData, value: any) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleMultiSelect = (name: string, value: string) => {
+  const handleMultiSelect = (name: "segmento" | "trends", value: string) => {
     setFormData((prev) => ({
       ...prev,
       [name]: prev[name].includes(value)
-        ? prev[name].filter((v) => v !== value)
+        ? prev[name].filter((v: string) => v !== value)
         : [...prev[name], value],
     }));
   };
@@ -188,7 +178,7 @@ const AgriFoodQuestionario = () => {
 
   const handleTrendDetailChange = (
     trendId: string,
-    field: string,
+    field: keyof TrendDetail,
     value: any
   ) => {
     setFormData((prev) => ({
@@ -235,12 +225,14 @@ const AgriFoodQuestionario = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("handleSubmit chiamato"); // PER DEBUG
+    console.log("handleSubmit chiamato");
     setIsSubmitting(true);
     setSubmitError(null);
 
     try {
-      const emailInput = document.querySelector('input[type="email"]');
+      const emailInput = document.querySelector(
+        'input[type="email"]'
+      ) as HTMLInputElement;
       const email = emailInput ? emailInput.value : "";
 
       const dataToSubmit = {
@@ -255,7 +247,7 @@ const AgriFoodQuestionario = () => {
         setSubmitSuccess(true);
         console.log("Questionario inviato con successo!");
       }
-    } catch (error) {
+    } catch (error: any) {
       setSubmitError(error.message);
       console.error("Errore invio:", error);
     } finally {
@@ -267,7 +259,7 @@ const AgriFoodQuestionario = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
-      {/* Progress Bar Creativa */}
+      {/* Progress Bar */}
       <div className="fixed top-0 left-0 right-0 h-2 bg-gray-200 z-50">
         <div
           className="h-full bg-gradient-to-r from-green-500 to-blue-600 transition-all duration-500 ease-out relative"
@@ -473,7 +465,7 @@ const AgriFoodQuestionario = () => {
                         "Medio",
                         "Alto",
                         "Molto alto",
-                      ].map((level, idx) => (
+                      ].map((level) => (
                         <button
                           key={level}
                           onClick={() =>
@@ -590,7 +582,14 @@ const AgriFoodQuestionario = () => {
                 const currentTrend = trends.find(
                   (t) => t.id === selectedTrends[currentTrendIndex]
                 );
-                if (!currentTrend) return null;
+
+                if (!currentTrend) return null; // safety check
+
+                const trendDetails =
+                  formData.trendDetails[
+                    currentTrend.id as keyof typeof formData.trendDetails
+                  ] ?? {};
+
                 return (
                   <>
                     <div className="mb-6">
@@ -603,7 +602,7 @@ const AgriFoodQuestionario = () => {
                           </div>
                           <div>
                             <h2 className="text-2xl font-bold">
-                              {currentTrend?.name}
+                              {currentTrend.name}
                             </h2>
                             <p className="text-gray-600">
                               Trend {currentTrendIndex + 1} di{" "}
@@ -650,8 +649,7 @@ const AgriFoodQuestionario = () => {
                                   )
                                 }
                                 className={`flex-1 py-3 rounded-lg transition-all ${
-                                  formData.trendDetails[currentTrend?.id]
-                                    ?.familiarita === level
+                                  trendDetails.familiarita === level
                                     ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transform scale-105"
                                     : "bg-white border-2 border-gray-200 hover:border-gray-300"
                                 }`}
@@ -671,10 +669,7 @@ const AgriFoodQuestionario = () => {
                             <input
                               type="checkbox"
                               className="mr-3"
-                              checked={
-                                formData.trendDetails[currentTrend?.id]
-                                  ?.esempi || false
-                              }
+                              checked={!!trendDetails.esempi}
                               onChange={(e) =>
                                 handleTrendDetailChange(
                                   currentTrend.id,
@@ -691,10 +686,7 @@ const AgriFoodQuestionario = () => {
                             <input
                               type="checkbox"
                               className="mr-3"
-                              checked={
-                                formData.trendDetails[currentTrend?.id]
-                                  ?.aggiornamento || false
-                              }
+                              checked={!!trendDetails.aggiornamento}
                               onChange={(e) =>
                                 handleTrendDetailChange(
                                   currentTrend.id,
@@ -711,7 +703,7 @@ const AgriFoodQuestionario = () => {
                       </div>
                     </div>
 
-                    {/* Interesse */}
+                    {/* Interesse Strategico */}
                     <div className="mb-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl">
                       <h3 className="font-semibold mb-4 flex items-center gap-2">
                         <Icons.TrendingUp className="w-5 h-5 text-green-600" />
@@ -736,8 +728,7 @@ const AgriFoodQuestionario = () => {
                                   )
                                 }
                                 className={`flex-1 py-3 rounded-lg transition-all ${
-                                  formData.trendDetails[currentTrend?.id]
-                                    ?.rilevanza === level
+                                  trendDetails.rilevanza === level
                                     ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg transform scale-105"
                                     : "bg-white border-2 border-gray-200 hover:border-gray-300"
                                 }`}
@@ -755,10 +746,7 @@ const AgriFoodQuestionario = () => {
                             </label>
                             <select
                               className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-green-500 focus:outline-none"
-                              value={
-                                formData.trendDetails[currentTrend?.id]
-                                  ?.orizzonte || ""
-                              }
+                              value={trendDetails.orizzonte || ""}
                               onChange={(e) =>
                                 handleTrendDetailChange(
                                   currentTrend.id,
@@ -781,10 +769,7 @@ const AgriFoodQuestionario = () => {
                             </label>
                             <select
                               className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-green-500 focus:outline-none"
-                              value={
-                                formData.trendDetails[currentTrend?.id]
-                                  ?.budget || ""
-                              }
+                              value={trendDetails.budget || ""}
                               onChange={(e) =>
                                 handleTrendDetailChange(
                                   currentTrend.id,
@@ -806,10 +791,10 @@ const AgriFoodQuestionario = () => {
                       </div>
                     </div>
 
-                    {/* Barriere (shown only if rilevanza >= 4 or orizzonte <= 2 anni) */}
-                    {(formData.trendDetails[currentTrend?.id]?.rilevanza >= 4 ||
+                    {/* Barriere (solo se rilevanza >= 4 o orizzonte entro 1-2 anni) */}
+                    {(trendDetails.rilevanza! >= 4 ||
                       ["12mesi", "1-2anni"].includes(
-                        formData.trendDetails[currentTrend?.id]?.orizzonte
+                        trendDetails.orizzonte || ""
                       )) && (
                       <div className="p-6 bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl">
                         <h3 className="font-semibold mb-4 flex items-center gap-2">
@@ -834,8 +819,7 @@ const AgriFoodQuestionario = () => {
                                     )
                                   }
                                   className={`flex-1 py-2 rounded transition-all text-sm ${
-                                    formData.trendDetails[currentTrend?.id]
-                                      ?.competenze === level
+                                    trendDetails.competenze === level
                                       ? "bg-orange-500 text-white"
                                       : "bg-white border border-gray-200"
                                   }`}
@@ -861,8 +845,7 @@ const AgriFoodQuestionario = () => {
                                     )
                                   }
                                   className={`flex-1 py-2 rounded transition-all text-sm ${
-                                    formData.trendDetails[currentTrend?.id]
-                                      ?.funding === level
+                                    trendDetails.funding === level
                                       ? "bg-red-500 text-white"
                                       : "bg-white border border-gray-200"
                                   }`}
@@ -939,6 +922,7 @@ const AgriFoodQuestionario = () => {
                 >
                   {isSubmitting ? "Invio in corso..." : "Invia questionario"}
                 </button>
+
                 {submitError && (
                   <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">
                     Errore: {submitError}
@@ -953,52 +937,52 @@ const AgriFoodQuestionario = () => {
               </div>
             </div>
           )}
-        </div>
 
-        {/* Navigation */}
-        <div className="flex justify-between items-center mt-8">
-          <button
-            onClick={currentSection === 3 ? prevTrend : prevSection}
-            disabled={currentSection === 0}
-            className={`flex items-center gap-2 px-6 py-3 rounded-full transition-all ${
-              currentSection === 0
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-white text-gray-700 hover:shadow-md hover:scale-105"
-            }`}
-          >
-            <Icons.ChevronLeft className="w-5 h-5" />
-            Indietro
-          </button>
+          {/* Navigation */}
+          <div className="flex justify-between items-center mt-8">
+            <button
+              onClick={currentSection === 3 ? prevTrend : prevSection}
+              disabled={currentSection === 0}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full transition-all ${
+                currentSection === 0
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white text-gray-700 hover:shadow-md hover:scale-105"
+              }`}
+            >
+              <Icons.ChevronLeft className="w-5 h-5" />
+              Indietro
+            </button>
 
-          <div className="flex gap-2">
-            {sections.map((_, idx) => (
-              <div
-                key={idx}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  idx === currentSection ? "bg-blue-600 w-8" : "bg-gray-300"
-                }`}
-              />
-            ))}
+            <div className="flex gap-2">
+              {sections.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    idx === currentSection ? "bg-blue-600 w-8" : "bg-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={currentSection === 3 ? nextTrend : nextSection}
+              disabled={
+                (currentSection === 1 &&
+                  (!formData.dimensione || formData.segmento.length === 0)) ||
+                (currentSection === 2 && selectedTrends.length === 0)
+              }
+              className={`flex items-center gap-2 px-6 py-3 rounded-full transition-all ${
+                (currentSection === 1 &&
+                  (!formData.dimensione || formData.segmento.length === 0)) ||
+                (currentSection === 2 && selectedTrends.length === 0)
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-gradient-to-r from-green-500 to-blue-600 text-white hover:shadow-lg hover:scale-105"
+              }`}
+            >
+              {currentSection === 4 ? "Invia" : "Avanti"}
+              <Icons.ChevronRight className="w-5 h-5" />
+            </button>
           </div>
-
-          <button
-            onClick={currentSection === 3 ? nextTrend : nextSection}
-            disabled={
-              (currentSection === 1 &&
-                (!formData.dimensione || formData.segmento.length === 0)) ||
-              (currentSection === 2 && selectedTrends.length === 0)
-            }
-            className={`flex items-center gap-2 px-6 py-3 rounded-full transition-all ${
-              (currentSection === 1 &&
-                (!formData.dimensione || formData.segmento.length === 0)) ||
-              (currentSection === 2 && selectedTrends.length === 0)
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-green-500 to-blue-600 text-white hover:shadow-lg hover:scale-105"
-            }`}
-          >
-            {currentSection === 4 ? "Invia" : "Avanti"}
-            <Icons.ChevronRight className="w-5 h-5" />
-          </button>
         </div>
       </main>
     </div>
