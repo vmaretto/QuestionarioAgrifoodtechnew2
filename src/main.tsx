@@ -5,7 +5,6 @@ import "./index.css";
 import AgriFoodQuestionario from "./App";
 import AdminPanel from "./AdminPanel";
 import React from "react";
-
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
 root.render(
