@@ -447,7 +447,7 @@ const AgriFoodQuestionario = () => {
   };
 
   const sections = [
-    { title: "Benvenuto", subtitle: "Innovazione AgriFoodTech Lazio" },
+    { title: "Benvenuto", subtitle: "Innovazione AgriFoodTech nel Lazio" },
     { title: "Profilo Aziendale", subtitle: "Conosciamoci meglio" },
     { title: "Trend Tecnologici", subtitle: "Seleziona le tue priorità" },
     { title: "Approfondimento", subtitle: "Dettagli sui trend selezionati" },
