@@ -870,7 +870,7 @@ const AgriFoodQuestionario = () => {
                     Seleziona le tecnologie emergenti
                   </h2>
                   <p className="text-gray-600">
-                    Scegli da 2 a 4 tecnologie più rilevanti per la tua impresa
+                    Scegli preferibilmente almeno 4 tecnologie rilevanti per la tua impresa
                     nei prossimi 2-3 anni
                   </p>
                   <div className="mt-3 flex items-center gap-2">

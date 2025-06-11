@@ -4,7 +4,7 @@
 const Header = () => (
   <div className="w-full bg-white py-4 shadow-sm">
     <img
-      src="/header-image.png"
+      src="/header-image-def.png"
       alt="Intestazione Questionario"
       className="mx-auto max-w-full h-auto"
     />
