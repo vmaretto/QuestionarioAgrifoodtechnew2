@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import * as Icons from "lucide-react";
 import { questionnaireAPI } from "./api/questionnaire";
 import Header from "./components/Header";
+import Footer from "./Footer"; // Importa il Footer
 
 // Tipo per trendDetails
 type TrendDetail = {
@@ -639,11 +640,9 @@ const AgriFoodQuestionario = () => {
                   </div>
                   <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl">
                     <Icons.Globe className="w-12 h-12 text-blue-600 mx-auto mb-3" />
-                    <h3 className="font-semibold mb-2">
-                      Report personalizzato
-                    </h3>
+                    <h3 className="font-semibold mb-2">Tecnologie emergenti</h3>
                     <p className="text-sm text-gray-600">
-                      Confronta i tuoi dati con il mercato
+                      Esplora le ultime innovazioni nell’AgriFoodTech
                     </p>
                   </div>
                   <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl">
@@ -870,8 +869,8 @@ const AgriFoodQuestionario = () => {
                     Seleziona le tecnologie emergenti
                   </h2>
                   <p className="text-gray-600">
-                    Scegli preferibilmente almeno 4 tecnologie rilevanti per la tua impresa
-                    nei prossimi 2-3 anni
+                    Scegli preferibilmente almeno 4 tecnologie rilevanti per la
+                    tua impresa nei prossimi 2-3 anni
                   </p>
                   <div className="mt-3 flex items-center gap-2">
                     <div className="flex gap-1">
@@ -1381,6 +1380,9 @@ const AgriFoodQuestionario = () => {
             </div>
           </div>
         </main>
+
+        {/* Aggiungi il Footer qui, sotto il contenuto del questionario */}
+        <Footer />
       </div>
     </>
   );
