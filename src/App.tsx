@@ -448,7 +448,7 @@ const AgriFoodQuestionario = () => {
   };
 
   const sections = [
-    { title: "Benvenuto", subtitle: "Innovazione AgriFoodTech nel Lazio" },
+    { title: "Benvenuto", subtitle: "---" },
     { title: "Profilo Aziendale", subtitle: "Conosciamoci meglio" },
     { title: "Trend Tecnologici", subtitle: "Seleziona le tue priorità" },
     { title: "Approfondimento", subtitle: "Dettagli sui trend selezionati" },
@@ -649,7 +649,7 @@ const AgriFoodQuestionario = () => {
                     <Icons.TrendingUp className="w-12 h-12 text-purple-600 mx-auto mb-3" />
                     <h3 className="font-semibold mb-2">Impatto concreto</h3>
                     <p className="text-sm text-gray-600">
-                      Contribuisci alle policy regionali
+                      Contribuisci alla definizione di nuovi programmi
                     </p>
                   </div>
                 </div>
