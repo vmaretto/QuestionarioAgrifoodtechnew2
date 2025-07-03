@@ -448,7 +448,7 @@ const AgriFoodQuestionario = () => {
   };
 
   const sections = [
-    { title: "Benvenuto", subtitle: "---" },
+    { title: "Benvenuto", subtitle: "" },
     { title: "Profilo Aziendale", subtitle: "Conosciamoci meglio" },
     { title: "Trend Tecnologici", subtitle: "Seleziona le tue priorità" },
     { title: "Approfondimento", subtitle: "Dettagli sui trend selezionati" },
@@ -621,13 +621,23 @@ const AgriFoodQuestionario = () => {
                   <h2 className="text-4xl font-bold mb-4">
                     Costruiamo il futuro dell'Agroalimentare
                   </h2>
-                  <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-                    Il tuo contributo è fondamentale per mappare i bisogni di
-                    innovazione delle imprese del Lazio. Insieme possiamo
-                    accelerare la trasformazione digitale e sostenibile del
-                    settore. Lazio Innova utilizzerà i dati in maniera aggregata
-                    ed esclusivamente in forma anonima
-                  </p>
+                  <div className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto space-y-4">
+                    <p>
+                      Lazio Innova, nell’ambito del PR Lazio FESR 2021/2027 –
+                      O.S. 1.3, vuole favorire lo sviluppo di soluzioni che
+                      soddisfino le necessità di innovazione espresse dal
+                      settore agroalimentare.
+                    </p>
+                    <p>
+                      Il tuo contributo è fondamentale per mappare queste
+                      necessità e costruire insieme azioni di accelerazione
+                      dell’innovazione.
+                    </p>
+                    <p>
+                      Lazio Innova utilizzerà i dati in maniera aggregata ed
+                      esclusivamente in forma anonima.
+                    </p>
+                  </div>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-6 mb-8">
@@ -642,14 +652,15 @@ const AgriFoodQuestionario = () => {
                     <Icons.Globe className="w-12 h-12 text-blue-600 mx-auto mb-3" />
                     <h3 className="font-semibold mb-2">Tecnologie emergenti</h3>
                     <p className="text-sm text-gray-600">
-                      Esplora le ultime innovazioni nell’AgriFoodTech
+                      Esplora le tendenze nell’Agroalimentare
                     </p>
                   </div>
                   <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl">
                     <Icons.TrendingUp className="w-12 h-12 text-purple-600 mx-auto mb-3" />
                     <h3 className="font-semibold mb-2">Impatto concreto</h3>
                     <p className="text-sm text-gray-600">
-                      Contribuisci alla definizione di nuovi programmi
+                      Contribuisci alla definizione di nuove azioni per favorire
+                      l‘innovazione
                     </p>
                   </div>
                 </div>
@@ -1285,8 +1296,8 @@ const AgriFoodQuestionario = () => {
                     Grazie per il tuo contributo!
                   </h2>
                   <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                    Le tue risposte sono preziose per costruire il futuro
-                    dell'innovazione agroalimentare nel Lazio.
+                    Le tue risposte sono preziose per aiutarci a costruire il
+                    futuro dell'innovazione agroalimentare nel Lazio.
                   </p>
                 </div>
 
@@ -1295,8 +1306,17 @@ const AgriFoodQuestionario = () => {
                   <ul className="text-left space-y-2 max-w-md mx-auto">
                     <li className="flex items-start gap-2">
                       <span>
-                        Seguici su lazioinnova.it per partecipare ai focus group
-                        e workshop di approfondimento
+                        Seguici su{" "}
+                        <a
+                          href="https://www.lazioinnova.it"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 underline hover:text-blue-800 transition"
+                        >
+                          lazioinnova.it
+                        </a>{" "}
+                        per partecipare ai focus group e workshop di
+                        approfondimento
                       </span>
                     </li>
                   </ul>
