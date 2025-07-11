@@ -1,11 +1,14 @@
 // src/api/questionnaire.ts
 
-const BASE_URL = "";
-const API_URL = `${BASE_URL}/api`;
+// → punta direttamente al tuo Web App di Apps Script
+const BASE_URL = "https://script.google.com/macros/s/AKfycbxJToeBBlAd5K-UE0u4_eRiGxuJhl0W8lcEUUmTbPST7rkIzLmf4HECidZtTBllIRBizg/exec";
+
+// da qui in poi non ti serve più /api
+const API_URL = BASE_URL;
 
 export const questionnaireAPI = {
   submit: async (data: any) => {
-    const response = await fetch(`${API_URL}/survey`, {
+    const response = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -16,15 +19,17 @@ export const questionnaireAPI = {
   },
 
   exportCSV: async () => {
-    window.open(`${BASE_URL}/export/aziende.csv`, "_blank");
+    // se vuoi continuare a esportare da Vercel, lascia qui i tuoi export
+    window.open("/export/aziende.csv", "_blank");
   },
 
   exportRisposteCSV: async () => {
-    window.open(`${BASE_URL}/export/risposte.csv`, "_blank");
+    window.open("/export/risposte.csv", "_blank");
   },
 
   getResponses: async () => {
-    const response = await fetch(`${API_URL}/responses`);
+    // questo endpoint se lo stavi usando lato Vercel
+    const response = await fetch("/api/responses");
     return response.json();
   },
 };
