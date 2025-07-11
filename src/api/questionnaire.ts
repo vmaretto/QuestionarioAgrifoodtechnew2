@@ -1,7 +1,7 @@
 // src/api/questionnaire.ts
 
 // → punta direttamente al tuo Web App di Apps Script
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzbyZZUsQoUAhroIR2p-qVl0Gs7Ia5VEdC47wmpBYhOCq9vQXc6aeBw66eHhZ7JNSZT/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycby4h9-v3rbEji3FXOpskEqcAoNIXFFxlIFDP2jdYZue1ht6gxlo03kL-etW5gILrXaa/exec";
 
 export const questionnaireAPI = {
   submit: async (data: Record<string, any>) => {
