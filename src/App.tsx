@@ -464,33 +464,56 @@ const AgriFoodQuestionario = () => {
 
   // ────────── HANDLER GENERICI ──────────
   const handleInputChange = (name: keyof FormData, value: any) => {
+    console.log(`📝 Campo modificato: ${field} = ${value}`);
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // ✅ Usando “as string[]” in inizializzazione, prev[name] è già string[]
   const handleMultiSelect = (name: "segmento" | "trends", value: string) => {
-    setFormData((prev) => ({
+  setFormData((prev) => {
+    const alreadySelected = prev[name].includes(value);
+    const updated = alreadySelected
+      ? prev[name].filter((v: string) => v !== value)
+      : [...prev[name], value];
+
+    // 📌 LOG prima del return
+    console.log(`🔁 MultiSelect aggiornato: ${name} = [${updated.join(", ")}]`);
+
+    return {
       ...prev,
-      [name]: prev[name].includes(value)
-        ? prev[name].filter((v: string) => v !== value)
-        : [...prev[name], value],
-    }));
-  };
+      [name]: updated,
+    };
+  });
+};
 
   const handleTrendSelection = (trendId: string) => {
-    if (selectedTrends.includes(trendId)) {
-      setSelectedTrends((prev) => prev.filter((t) => t !== trendId));
-    } else if (selectedTrends.length < 4) {
-      setSelectedTrends((prev) => [...prev, trendId]);
-    }
-  };
+  if (selectedTrends.includes(trendId)) {
+    setSelectedTrends((prev) => {
+      const updated = prev.filter((t) => t !== trendId);
+      console.log(`🟦 Trend deselezionato: ${trendId}`);
+      console.log(`📊 Trends attivi: [${updated.join(", ")}]`);
+      return updated;
+    });
+  } else if (selectedTrends.length < 4) {
+    setSelectedTrends((prev) => {
+      const updated = [...prev, trendId];
+      console.log(`🟩 Trend selezionato: ${trendId}`);
+      console.log(`📊 Trends attivi: [${updated.join(", ")}]`);
+      return updated;
+    });
+  } else {
+    console.log("⚠️ Limite massimo di 4 trend raggiunto");
+  }
+};
 
   const handleTrendDetailChange = (
-    trendId: string,
-    field: keyof TrendDetail,
-    value: any
-  ) => {
-    setFormData((prev) => ({
+  trendId: string,
+  field: keyof TrendDetail,
+  value: any
+) => {
+  setFormData((prev) => {
+    console.log(`✏️ Trend "${trendId}" – campo "${field}" aggiornato a:`, value);
+    return {
       ...prev,
       trendDetails: {
         ...prev.trendDetails,
@@ -499,8 +522,9 @@ const AgriFoodQuestionario = () => {
           [field]: value,
         },
       },
-    }));
-  };
+    };
+  });
+};
 
   // ────────── NAVIGAZIONE SEZIONI ──────────
   const nextSection = () => {
@@ -536,37 +560,49 @@ const AgriFoodQuestionario = () => {
 
   // ────────── INVIO QUESTIONARIO ──────────
   const handleSubmit = async () => {
-    console.log("handleSubmit chiamato");
-    setIsSubmitting(true);
-    setSubmitError(null);
+  console.log("🚀 handleSubmit chiamato");
+  setIsSubmitting(true);
+  setSubmitError(null);
 
-    try {
-      // ✅ CAST NECESSARIO: querySelector restituisce “Element | null”
-      const emailInput = document.querySelector(
-        'input[type="email"]'
-      ) as HTMLInputElement | null;
-      const email = emailInput ? emailInput.value : "";
+  try {
+    const emailInput = document.querySelector(
+      'input[type="email"]'
+    ) as HTMLInputElement | null;
+    const email = emailInput ? emailInput.value : "";
 
-      const dataToSubmit = {
-        ...formData,
-        email,
-        timestamp: new Date().toISOString(),
-      };
+    const timestamp = new Date().toISOString();
 
-      const result = await questionnaireAPI.submit(dataToSubmit);
+    const dataToSubmit = {
+      ...formData,
+      email,
+      timestamp,
+    };
 
-      if (result.success) {
-        setSubmitSuccess(true);
-        console.log("Questionario inviato con successo!");
-      }
-    } catch (error: any) {
-      // ✅ Typing esplicito “error: any” altrimenti TS dà “unknown”
-      setSubmitError(error.message);
-      console.error("Errore invio:", error);
-    } finally {
-      setIsSubmitting(false);
+    // 🔍 LOG DETTAGLIATI
+    console.log("📤 Dati da inviare (dataToSubmit):", dataToSubmit);
+    console.log("📩 Email:", email);
+    console.log("📅 Timestamp:", timestamp);
+    console.log("🏢 Dimensione aziendale:", formData.dimensione);
+    console.log("📂 Segmenti selezionati:", formData.segmento);
+    console.log("📊 Trend selezionati:", formData.trends);
+    console.log("🧠 Dettagli per trend (trendDetails):", formData.trendDetails);
+
+    // Se vuoi anche tabella per overview:
+    console.table(dataToSubmit);
+
+    const result = await questionnaireAPI.submit(dataToSubmit);
+
+    if (result.success) {
+      setSubmitSuccess(true);
+      console.log("✅ Questionario inviato con successo!");
     }
-  };
+  } catch (error: any) {
+    setSubmitError(error.message);
+    console.error("❌ Errore invio:", error);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   // ────────── PROGRESS BAR ──────────
   const progress = ((currentSection + 1) / sections.length) * 100;
