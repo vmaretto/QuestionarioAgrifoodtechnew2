@@ -1,4 +1,3 @@
-
 // api/survey.ts
 import { google } from "googleapis";
 import fs from "fs";
@@ -41,7 +40,9 @@ export default async function handler(req: any, res: any) {
       credentials,
       scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     });
-    const sheets = google.sheets({ version: "v4", auth });
+    // → ottieni il client concreto che implementa AuthClient
+    const authClient = await auth.getClient();
+    const sheets = google.sheets({ version: "v4", auth: authClient });
 
     // 5) Prepara righe da inviare
     const aziendaRow = [
