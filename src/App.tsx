@@ -45,6 +45,10 @@ interface SubcategoryInfo {
   description: string;
 }
 
+const generateAziendaId = () => {
+  return `az-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 8)}`;
+};
+
 const AgriFoodQuestionario = () => {
   // ────────── STATO ──────────
   const [currentSection, setCurrentSection] = useState<number>(0);
@@ -572,20 +576,25 @@ const AgriFoodQuestionario = () => {
 
     const timestamp = new Date().toISOString();
 
+const aziendaId = generateAziendaId();
+    
     const dataToSubmit = {
       ...formData,
       email,
-      timestamp,
+      aziendaId,
+     timestamp: new Date().toISOString(),
     };
 
+    
     // 🔍 LOG DETTAGLIATI
-    console.log("📤 Dati da inviare (dataToSubmit):", dataToSubmit);
-    console.log("📩 Email:", email);
-    console.log("📅 Timestamp:", timestamp);
-    console.log("🏢 Dimensione aziendale:", formData.dimensione);
-    console.log("📂 Segmenti selezionati:", formData.segmento);
-    console.log("📊 Trend selezionati:", formData.trends);
-    console.log("🧠 Dettagli per trend (trendDetails):", formData.trendDetails);
+console.log("📤 Dati da inviare (dataToSubmit):", dataToSubmit);
+console.log("🆔 ID azienda (aziendaId):", aziendaId);
+console.log("📩 Email:", email);
+console.log("📅 Timestamp:", timestamp);
+console.log("🏢 Dimensione aziendale:", formData.dimensione);
+console.log("📂 Segmenti selezionati:", formData.segmento);
+console.log("📊 Trend selezionati:", formData.trends);
+console.log("🧠 Dettagli per trend (trendDetails):", formData.trendDetails);
 
     // Se vuoi anche tabella per overview:
     console.table(dataToSubmit);
