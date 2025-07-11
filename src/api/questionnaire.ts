@@ -17,9 +17,12 @@ export const questionnaireAPI = {
   });
 
   const res = await fetch(WEBAPP_URL, {
-    method: "POST",
-    body: form.toString(),
-  });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
+  },
+  body: form.toString(),
+});
 
   return res.json();
 },
