@@ -14,7 +14,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const body = req.body;
 
     // Parse la chiave JSON dalle env vars
-    const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT!);
+    const credentials = JSON.parse(
+  process.env.GOOGLE_SERVICE_ACCOUNT!.replace(/\\n/g, '\n')
+);
 
     const auth = new google.auth.GoogleAuth({
       credentials,
