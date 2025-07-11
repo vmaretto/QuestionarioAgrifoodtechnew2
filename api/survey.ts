@@ -1,45 +1,49 @@
+
+// api/survey.ts
 import { google } from "googleapis";
-import { VercelRequest, VercelResponse } from "@vercel/node";
 import fs from "fs";
 import path from "path";
 
-const SHEET_ID = "1qqbVYv7mcLltMprO-xxxxx-xxxxxxxxxxxxxx"; // <-- Inserisci il tuo Sheet ID se non l'hai già fatto
+const SHEET_ID = "1QhX6a7Jg7EU4a_mQG1cqdKgxIqGQUGljgadWRPfE1S8"; // → sostituisci con il tuo Sheet ID
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: any, res: any) {
+  // 1) Verifica metodo
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).end("Metodo non consentito");
   }
 
   try {
+    // 2) Leggi body
     const body = req.body;
     console.log("Ricevuto body:", body);
 
-    const filePath = path.resolve(process.cwd(), "config/service-account.json");
-
-    let credentials;
+    // 3) Carica credenziali da file
+    const filePath = path.join(process.cwd(), "config", "service-account.json");
+    let credentials: any;
     try {
-      const rawCredentials = fs.readFileSync(filePath, "utf8");
-      credentials = JSON.parse(rawCredentials);
+      const raw = fs.readFileSync(filePath, "utf8");
+      credentials = JSON.parse(raw);
       console.log("[DEBUG] ✅ Credenziali parse OK:", {
         project_id: credentials.project_id,
         client_email: credentials.client_email,
       });
-    } catch (jsonError: any) {
-      console.error("❌ Errore nel parsing del file di credenziali:", jsonError.message);
+    } catch (err: any) {
+      console.error("❌ Errore parsing service-account.json:", err.message);
       return res.status(500).json({
-        error: "Errore parsing GOOGLE_SERVICE_ACCOUNT",
-        message: jsonError.message,
+        error: "Errore parsing service-account.json",
+        detail: err.message,
       });
     }
 
+    // 4) Inizializza Google Sheets client
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     });
-
     const sheets = google.sheets({ version: "v4", auth });
 
+    // 5) Prepara righe da inviare
     const aziendaRow = [
       body.azienda || "",
       body.ruolo || "",
@@ -49,44 +53,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       body.altro || "",
       new Date().toISOString(),
     ];
-
-    const preferenze = body.preferenze || {};
+    const pref = body.preferenze || {};
     const risposteRow = [
       body.azienda || "",
-      preferenze.blockchain || 0,
-      preferenze.intelligenza_artificiale || 0,
-      preferenze.iot || 0,
-      preferenze.realtà_aumentata_virtuale || 0,
-      preferenze.digital_twin || 0,
-      preferenze.robotica || 0,
+      pref.blockchain || 0,
+      pref.intelligenza_artificiale || 0,
+      pref.iot || 0,
+      pref.realtà_aumentata_virtuale || 0,
+      pref.digital_twin || 0,
+      pref.robotica || 0,
       new Date().toISOString(),
     ];
 
-    console.log("Scrivo su foglio aziende...");
+    // 6) Scrivi su foglio "aziende"
+    console.log("Scrivo su foglio aziende…");
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
       range: "aziende!A1",
       valueInputOption: "USER_ENTERED",
-      requestBody: {
-        values: [aziendaRow],
-      },
+      requestBody: { values: [aziendaRow] },
     });
 
-    console.log("Scrivo su foglio risposte...");
+    // 7) Scrivi su foglio "risposte"
+    console.log("Scrivo su foglio risposte…");
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
       range: "risposte!A1",
       valueInputOption: "USER_ENTERED",
-      requestBody: {
-        values: [risposteRow],
-      },
+      requestBody: { values: [risposteRow] },
     });
 
     console.log("✅ Scrittura completata.");
-    return res.status(200).json({ message: "Dati salvati correttamente su Google Sheet" });
+    return res.status(200).json({ message: "Dati salvati su Google Sheet" });
 
-  } catch (error) {
-    console.error("Errore durante il salvataggio su Google Sheet:", error);
+  } catch (error: any) {
+    console.error("Errore salvataggio Google Sheet:", error);
     return res.status(500).json({ error: "Errore interno del server" });
   }
 }
