@@ -3,7 +3,7 @@ import { google } from "googleapis";
 import fs from "fs";
 import path from "path";
 
-const SHEET_ID = "1QhX6a7Jg7EU4a_mQG1cqdKgxIqGQUGljgadWRPfE1S8"; // → sostituisci con il tuo Sheet ID
+const SHEET_ID = "1QhX6a7G1EU4a_mQG1cqdKgxIqGQUGljgadWRPfE1S8"; // ← sostituisci con il tuo Sheet ID
 
 export default async function handler(req: any, res: any) {
   // 1) Verifica metodo
@@ -42,6 +42,7 @@ export default async function handler(req: any, res: any) {
     });
     // → ottieni il client concreto che implementa AuthClient
     const authClient = await auth.getClient();
+    // → passa authClient a google.sheets
     const sheets = google.sheets({ version: "v4", auth: authClient });
 
     // 5) Prepara righe da inviare
