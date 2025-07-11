@@ -10,6 +10,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const rawCredentials = process.env.GOOGLE_SERVICE_ACCOUNT;
 
+console.log("Snippet originale da Vercel (primi 200 caratteri):");
+console.log(rawCredentials.slice(0, 200));
+
+const normalized = rawCredentials.replace(/\\n/g, "\n");
+
+console.log("Snippet normalizzato per JSON.parse (primi 200 caratteri):");
+console.log(normalized.slice(0, 200));
+    
     if (!rawCredentials) {
       console.error("GOOGLE_SERVICE_ACCOUNT mancante.");
       return res.status(500).json({ error: "Credenziali Google mancanti" });
