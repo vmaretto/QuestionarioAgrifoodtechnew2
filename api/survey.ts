@@ -1,9 +1,3 @@
-// /api/survey.ts
-import { google } from "googleapis";
-import { VercelRequest, VercelResponse } from "@vercel/node";
-
-const SHEET_ID = "1QhX6a7Jg7EU4a_mQG1cqdKgxIqGQUGljgadWRPfE1S8";
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -12,11 +6,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const body = req.body;
+    console.log("Ricevuto body:", body);
 
-    // Parse la chiave JSON dalle env vars
-    const credentials = JSON.parse(
-  process.env.GOOGLE_SERVICE_ACCOUNT!.replace(/\\n/g, '\n')
-);
+    const rawCredentials = process.env.GOOGLE_SERVICE_ACCOUNT;
+
+    if (!rawCredentials) {
+      console.error("GOOGLE_SERVICE_ACCOUNT mancante.");
+      return res.status(500).json({ error: "Credenziali Google mancanti" });
+    }
+
+    console.log("Credenziali grezze:", rawCredentials.slice(0, 100) + "...");
+
+    let credentials;
+    try {
+      credentials = JSON.parse(rawCredentials.replace(/\\n/g, "\n"));
+    } catch (jsonError) {
+      console.error("Errore nel parsing delle credenziali:", jsonError);
+      return res.status(500).json({ error: "Errore parsing GOOGLE_SERVICE_ACCOUNT" });
+    }
 
     const auth = new google.auth.GoogleAuth({
       credentials,
@@ -25,7 +32,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const sheets = google.sheets({ version: "v4", auth });
 
-    // Prepara righe da scrivere
     const aziendaRow = [
       body.azienda || "",
       body.ruolo || "",
@@ -48,7 +54,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       new Date().toISOString(),
     ];
 
-    // Scrive nei fogli
+    console.log("Scrivo su foglio aziende...");
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
       range: "aziende!A1",
@@ -58,6 +64,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       },
     });
 
+    console.log("Scrivo su foglio risposte...");
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
       range: "risposte!A1",
@@ -67,9 +74,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       },
     });
 
-    return res
-      .status(200)
-      .json({ message: "Dati salvati correttamente su Google Sheet" });
+    console.log("Scrittura completata.");
+    return res.status(200).json({ message: "Dati salvati correttamente su Google Sheet" });
+
   } catch (error) {
     console.error("Errore durante il salvataggio su Google Sheet:", error);
     return res.status(500).json({ error: "Errore interno del server" });
