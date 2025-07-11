@@ -464,9 +464,9 @@ const AgriFoodQuestionario = () => {
 
   // ────────── HANDLER GENERICI ──────────
   const handleInputChange = (name: keyof FormData, value: any) => {
-    console.log(`📝 Campo modificato: ${field} = ${value}`);
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  console.log(`📝 Campo modificato: ${name} = ${value}`);
+  setFormData((prev) => ({ ...prev, [name]: value }));
+};
 
   // ✅ Usando “as string[]” in inizializzazione, prev[name] è già string[]
   const handleMultiSelect = (name: "segmento" | "trends", value: string) => {
