@@ -18,12 +18,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log("Credenziali grezze:", rawCredentials.slice(0, 100) + "...");
 
     let credentials;
-    try {
-      credentials = JSON.parse(rawCredentials.replace(/\\n/g, "\n"));
-    } catch (jsonError) {
-      console.error("Errore nel parsing delle credenziali:", jsonError);
-      return res.status(500).json({ error: "Errore parsing GOOGLE_SERVICE_ACCOUNT" });
-    }
+try {
+  const normalized = rawCredentials.replace(/\\n/g, "\n");
+  credentials = JSON.parse(normalized);
+  console.log("[DEBUG] ✅ Credenziali parse OK: ", {
+    project_id: credentials.project_id,
+    client_email: credentials.client_email
+  });
+} catch (jsonError: any) {
+  console.error("❌ Errore nel parsing delle credenziali:", jsonError.message);
+
+  const match = jsonError.message.match(/position (\d+)/);
+  if (match) {
+    const pos = parseInt(match[1], 10);
+    const start = Math.max(0, pos - 20);
+    const end = Math.min(rawCredentials.length, pos + 20);
+    const snippet = rawCredentials.slice(start, end);
+
+    console.error(`Contesto errore vicino alla posizione ${pos}:`);
+    console.error("..." + snippet + "...");
+  }
+
+  return res.status(500).json({
+    error: "Errore parsing GOOGLE_SERVICE_ACCOUNT",
+    message: jsonError.message
+  });
+}
 
     const auth = new google.auth.GoogleAuth({
       credentials,
