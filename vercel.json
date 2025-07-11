@@ -1,17 +1,14 @@
 {
   "functions": {
-    // Forziamo Vercel a usare Node 18 per le nostre API
     "api/**/*.ts": {
       "runtime": "nodejs18.x"
     }
   },
   "rewrites": [
-    // Prima gestiamo le chiamate alle API (non devono finire nel single-page rewrite)
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     },
-    // Poi tutto il resto (il vostro SPA)
     {
       "source": "/(.*)",
       "destination": "/index.html"
