@@ -1,3 +1,10 @@
+import { google } from "googleapis";
+import { VercelRequest, VercelResponse } from "@vercel/node";
+import fs from "fs";
+import path from "path";
+
+const SHEET_ID = "1qqbVYv7mcLltMprO-xxxxx-xxxxxxxxxxxxxx"; // <-- Inserisci il tuo Sheet ID se non l'hai già fatto
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -8,50 +15,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const body = req.body;
     console.log("Ricevuto body:", body);
 
-    const rawCredentials = process.env.GOOGLE_SERVICE_ACCOUNT;
-
-console.log("Snippet originale da Vercel (primi 200 caratteri):");
-console.log(rawCredentials.slice(0, 200));
-
-const normalized = rawCredentials.replace(/\\n/g, "\n");
-
-console.log("Snippet normalizzato per JSON.parse (primi 200 caratteri):");
-console.log(normalized.slice(0, 200));
-    
-    if (!rawCredentials) {
-      console.error("GOOGLE_SERVICE_ACCOUNT mancante.");
-      return res.status(500).json({ error: "Credenziali Google mancanti" });
-    }
-
-    console.log("Credenziali grezze:", rawCredentials.slice(0, 100) + "...");
+    const filePath = path.resolve(process.cwd(), "config/service-account.json");
 
     let credentials;
-try {
-  const normalized = rawCredentials.replace(/\\n/g, "\n");
-  credentials = JSON.parse(normalized);
-  console.log("[DEBUG] ✅ Credenziali parse OK: ", {
-    project_id: credentials.project_id,
-    client_email: credentials.client_email
-  });
-} catch (jsonError: any) {
-  console.error("❌ Errore nel parsing delle credenziali:", jsonError.message);
-
-  const match = jsonError.message.match(/position (\d+)/);
-  if (match) {
-    const pos = parseInt(match[1], 10);
-    const start = Math.max(0, pos - 20);
-    const end = Math.min(rawCredentials.length, pos + 20);
-    const snippet = rawCredentials.slice(start, end);
-
-    console.error(`Contesto errore vicino alla posizione ${pos}:`);
-    console.error("..." + snippet + "...");
-  }
-
-  return res.status(500).json({
-    error: "Errore parsing GOOGLE_SERVICE_ACCOUNT",
-    message: jsonError.message
-  });
-}
+    try {
+      const rawCredentials = fs.readFileSync(filePath, "utf8");
+      credentials = JSON.parse(rawCredentials);
+      console.log("[DEBUG] ✅ Credenziali parse OK:", {
+        project_id: credentials.project_id,
+        client_email: credentials.client_email,
+      });
+    } catch (jsonError: any) {
+      console.error("❌ Errore nel parsing del file di credenziali:", jsonError.message);
+      return res.status(500).json({
+        error: "Errore parsing GOOGLE_SERVICE_ACCOUNT",
+        message: jsonError.message,
+      });
+    }
 
     const auth = new google.auth.GoogleAuth({
       credentials,
@@ -102,7 +82,7 @@ try {
       },
     });
 
-    console.log("Scrittura completata.");
+    console.log("✅ Scrittura completata.");
     return res.status(200).json({ message: "Dati salvati correttamente su Google Sheet" });
 
   } catch (error) {
