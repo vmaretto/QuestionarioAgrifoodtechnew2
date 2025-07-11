@@ -1,6 +1,6 @@
 // src/api/questionnaire.ts
 
-const BASE_URL = "https://risposte-questionario.glitch.me";
+const BASE_URL = "";
 const API_URL = `${BASE_URL}/api`;
 
 export const questionnaireAPI = {
