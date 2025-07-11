@@ -3,52 +3,41 @@ import { google } from "googleapis";
 import fs from "fs";
 import path from "path";
 
-const SHEET_ID = "1QhX6a7G1EU4a_mQG1cqdKgxIqGQUGljgadWRPfE1S8"; // ← sostituisci con il tuo Sheet ID
+const SHEET_ID = "1QhX6a7G1EU4a_mQG1cqdKgxIqGQUGljgadWRPfE1S8"; // ← sostituisci col tuo ID
 
 export default async function handler(req: any, res: any) {
-  // 1) Verifica metodo
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).end("Metodo non consentito");
   }
 
   try {
-    // 2) Leggi body
     const body = req.body;
     console.log("Ricevuto body:", body);
 
-    // 3) Carica credenziali da file
-    const filePath = path.join(process.cwd(), "config", "service-account.json");
-    let credentials: any;
-    try {
-      const raw = fs.readFileSync(filePath, "utf8");
-      credentials = JSON.parse(raw);
-      console.log("[DEBUG] ✅ Credenziali parse OK:", {
-        project_id: credentials.project_id,
-        client_email: credentials.client_email,
-      });
-    } catch (err: any) {
-      console.error("❌ Errore parsing service-account.json:", err.message);
-      return res.status(500).json({
-        error: "Errore parsing service-account.json",
-        detail: err.message,
-      });
-    }
-
-    // 4) Inizializza autenticazione Google
-    const auth = new google.auth.GoogleAuth({
-      credentials,
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+    // 1) Carica il JSON delle credenziali dal file
+    const credPath = path.join(process.cwd(), "config", "service-account.json");
+    const raw = fs.readFileSync(credPath, "utf8");
+    const creds = JSON.parse(raw);
+    console.log("[DEBUG] ✅ JSON credenziali OK:", {
+      project_id: creds.project_id,
+      client_email: creds.client_email,
     });
-    // ottieni il client concreto
-    const authClient = await auth.getClient();
-    // imposta il client come default per tutte le chiamate Google API
-    google.options({ auth: authClient });
 
-    // 5) Inizializza il client Sheets (senza passare auth qui)
-    const sheets = google.sheets({ version: "v4" });
+    // 2) Crea un client JWT
+    const jwtClient = new google.auth.JWT(
+      creds.client_email,
+      undefined,
+      creds.private_key,
+      ["https://www.googleapis.com/auth/spreadsheets"]
+    );
+    // autorizza (ottiene e mette in cache il token)
+    await jwtClient.authorize();
 
-    // 6) Prepara righe da inviare
+    // 3) Istanzia l’API Sheets passando il client JWT
+    const sheets = google.sheets({ version: "v4", auth: jwtClient });
+
+    // 4) Prepara le righe
     const aziendaRow = [
       body.azienda || "",
       body.ruolo || "",
@@ -70,7 +59,7 @@ export default async function handler(req: any, res: any) {
       new Date().toISOString(),
     ];
 
-    // 7) Scrivi su foglio "aziende"
+    // 5) Scrivi su "aziende"
     console.log("Scrivo su foglio aziende…");
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
@@ -79,7 +68,7 @@ export default async function handler(req: any, res: any) {
       requestBody: { values: [aziendaRow] },
     });
 
-    // 8) Scrivi su foglio "risposte"
+    // 6) Scrivi su "risposte"
     console.log("Scrivo su foglio risposte…");
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
@@ -89,10 +78,9 @@ export default async function handler(req: any, res: any) {
     });
 
     console.log("✅ Scrittura completata.");
-    return res.status(200).json({ message: "Dati salvati correttamente su Google Sheet" });
-
-  } catch (error: any) {
-    console.error("Errore salvataggio Google Sheet:", error);
+    return res.status(200).json({ message: "Dati salvati su Google Sheet" });
+  } catch (err: any) {
+    console.error("Errore salvataggio Google Sheet:", err);
     return res.status(500).json({ error: "Errore interno del server" });
   }
 }
