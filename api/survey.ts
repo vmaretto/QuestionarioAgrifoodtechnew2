@@ -35,17 +35,20 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    // 4) Inizializza Google Sheets client
+    // 4) Inizializza autenticazione Google
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     });
-    // → ottieni il client concreto che implementa AuthClient
+    // ottieni il client concreto
     const authClient = await auth.getClient();
-    // → passa authClient a google.sheets
-    const sheets = google.sheets({ version: "v4", auth: authClient });
+    // imposta il client come default per tutte le chiamate Google API
+    google.options({ auth: authClient });
 
-    // 5) Prepara righe da inviare
+    // 5) Inizializza il client Sheets (senza passare auth qui)
+    const sheets = google.sheets({ version: "v4" });
+
+    // 6) Prepara righe da inviare
     const aziendaRow = [
       body.azienda || "",
       body.ruolo || "",
@@ -67,7 +70,7 @@ export default async function handler(req: any, res: any) {
       new Date().toISOString(),
     ];
 
-    // 6) Scrivi su foglio "aziende"
+    // 7) Scrivi su foglio "aziende"
     console.log("Scrivo su foglio aziende…");
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
@@ -76,7 +79,7 @@ export default async function handler(req: any, res: any) {
       requestBody: { values: [aziendaRow] },
     });
 
-    // 7) Scrivi su foglio "risposte"
+    // 8) Scrivi su foglio "risposte"
     console.log("Scrivo su foglio risposte…");
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
@@ -86,7 +89,7 @@ export default async function handler(req: any, res: any) {
     });
 
     console.log("✅ Scrittura completata.");
-    return res.status(200).json({ message: "Dati salvati su Google Sheet" });
+    return res.status(200).json({ message: "Dati salvati correttamente su Google Sheet" });
 
   } catch (error: any) {
     console.error("Errore salvataggio Google Sheet:", error);
