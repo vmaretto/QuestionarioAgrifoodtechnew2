@@ -15,8 +15,12 @@ export default async function handler(req: any, res: any) {
     const body = req.body;
     console.log("Ricevuto body:", body);
 
-    // 1) Carica il JSON delle credenziali dal file
+    // 1) Carica credenziali dal file
     const credPath = path.join(process.cwd(), "config", "service-account.json");
+    if (!fs.existsSync(credPath)) {
+      console.error("❌ service-account.json non trovato in:", credPath);
+      return res.status(500).json({ error: "Credenziali mancanti" });
+    }
     const raw = fs.readFileSync(credPath, "utf8");
     const creds = JSON.parse(raw);
     console.log("[DEBUG] ✅ JSON credenziali OK:", {
@@ -24,20 +28,21 @@ export default async function handler(req: any, res: any) {
       client_email: creds.client_email,
     });
 
-    // 2) Crea un client JWT
+    // 2) Costruisci e autoriza il client JWT
     const jwtClient = new google.auth.JWT(
       creds.client_email,
       undefined,
       creds.private_key,
       ["https://www.googleapis.com/auth/spreadsheets"]
     );
-    // autorizza (ottiene e mette in cache il token)
     await jwtClient.authorize();
+    console.log("[DEBUG] ✅ JWT autorizzato");
 
-    // 3) Istanzia l’API Sheets passando il client JWT
-    const sheets = google.sheets({ version: "v4", auth: jwtClient });
+    // 3) Imposta il client globalmente e chiama sheets col primo overload
+    google.options({ auth: jwtClient });
+    const sheets = google.sheets("v4");
 
-    // 4) Prepara le righe
+    // 4) Prepara le righe da inviare
     const aziendaRow = [
       body.azienda || "",
       body.ruolo || "",
@@ -59,7 +64,7 @@ export default async function handler(req: any, res: any) {
       new Date().toISOString(),
     ];
 
-    // 5) Scrivi su "aziende"
+    // 5) Scrivi sul foglio “aziende”
     console.log("Scrivo su foglio aziende…");
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
@@ -68,7 +73,7 @@ export default async function handler(req: any, res: any) {
       requestBody: { values: [aziendaRow] },
     });
 
-    // 6) Scrivi su "risposte"
+    // 6) Scrivi sul foglio “risposte”
     console.log("Scrivo su foglio risposte…");
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
@@ -78,7 +83,7 @@ export default async function handler(req: any, res: any) {
     });
 
     console.log("✅ Scrittura completata.");
-    return res.status(200).json({ message: "Dati salvati su Google Sheet" });
+    return res.status(200).json({ message: "Dati salvati correttamente su Google Sheet" });
   } catch (err: any) {
     console.error("Errore salvataggio Google Sheet:", err);
     return res.status(500).json({ error: "Errore interno del server" });
