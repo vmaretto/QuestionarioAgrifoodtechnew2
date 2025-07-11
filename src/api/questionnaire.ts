@@ -1,21 +1,16 @@
 // src/api/questionnaire.ts
 
 // → punta direttamente al tuo Web App di Apps Script
-const BASE_URL = "https://script.google.com/macros/s/AKfycbxJToeBBlAd5K-UE0u4_eRiGxuJhl0W8lcEUUmTbPST7rkIzLmf4HECidZtTBllIRBizg/exec";
-
-// da qui in poi non ti serve più /api
-const API_URL = BASE_URL;
+const BASE_URL = "https://script.google.com/macros/s/AKfycbxye_XSN91OnUopeeJEnPmLDHwBezXu0-d2vVOm4e6Nsyo3Ssa9c85mnJG6W3VuNoHpcA/exec";
 
 export const questionnaireAPI = {
   submit: async (data: any) => {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const res = await fetch(BASE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-    return response.json();
+    return res.json();
   },
 
   exportCSV: async () => {
