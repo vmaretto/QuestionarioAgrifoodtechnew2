@@ -925,7 +925,7 @@ console.log("🧠 Dettagli per trend (trendDetails):", formData.trendDetails);
                     Seleziona le tecnologie emergenti
                   </h2>
                   <p className="text-gray-600">
-                    Scegli preferibilmente almeno 4 tecnologie rilevanti per la
+                    Scegli preferibilmente al più 4 tecnologie rilevanti per la
                     tua impresa nei prossimi 2-3 anni
                   </p>
                   <div className="mt-3 flex items-center gap-2">
@@ -1231,7 +1231,7 @@ console.log("🧠 Dettagli per trend (trendDetails):", formData.trendDetails);
                             </div>
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Budget previsto (24 mesi)
+                                Budget se previsto (24 mesi)
                               </label>
                               <select
                                 className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-green-500 focus:outline-none"
